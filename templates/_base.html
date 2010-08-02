@@ -1,0 +1,43 @@
+<!DOCTYPE>
+<html lang="en">
+<head>
+    <link type="text/css" rel="stylesheet" href="/static/css/main.css" />
+    <!--[if lt IE 9]> <script src="/static/js/html5.js"></script> <![endif]-->
+    <title>{% block title %}{% endblock %} | Kolormodo.com | Put a little kolor in your kdragon</title>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="width-wrapper">
+            <a id="logo" href="/" title="KOLORmodo.com | Put a little kolor in your kdragon"><img src="/static/img/logo.png" alt="KOLORmodo.com" /></a>
+            <div class="nav">
+                <a id="btn-browse" href="/browse">browse</a>
+                <a id="btn-create" href="/create">create</a>
+                <a id="btn-share" href="/share">share</a>
+            </div>
+
+        </div>
+    </header>
+    <div class="shadow"></div>
+    <div class="main">
+        <div class="content">
+            {% block body %}{% endblock %}
+        </div>
+        <div class="ad">
+        </div>
+        <span class="clear">&nbsp;</span>
+    </div>
+    <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAATYS4KyA4fcfRpx4CfA6I_BSi3Ygg_sTmrS2myjxaohB9vKbMbxSBsmm6MMnr4ze5gfJzDXgYrNUAOQ"></script>
+    <script type="text/javascript">
+        google.load("jquery", "1.4.2");
+        function debug(text) {
+            if (typeof(console.log) !== 'undefined') { console.log(text); }
+        }
+    </script>
+    <script type="text/javascript" src="/static/js/jquery.form.js"></script>
+    {% block script %}{% endblock %}
+    <footer>
+        <!-- Footer -->
+    </footer>
+</body>
+</html>
