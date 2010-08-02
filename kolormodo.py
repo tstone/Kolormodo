@@ -59,9 +59,8 @@ class ShareUploadHandler(BaseHandler):
 
         filename = str(self.request.get('qqfile'))
         data = unquote(self.request.body).replace('+', ' ')
-        self.data.new_colorscheme(data=data, user=users.get_current_user())
+        self.data.new_colorscheme(data=data, user=users.get_current_user(), filename=filename)
         self.response.out.write('{"success":true}')
-
         """
         try:
             self.data.new_colorscheme(data=data, user=users.get_current_user())

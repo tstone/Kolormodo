@@ -44,6 +44,7 @@
 {% block script %}
 <script type="text/javascript" src="/static/js/fileuploader/fileuploader.js"></script>
 <script type="text/javascript">
+    // Stored temporarily here while in development, move to external file once it's more stabalized
     google.setOnLoadCallback(function() {
       $(function() {
             Share.initUploader();
@@ -68,7 +69,7 @@
                         //alert('complete');
                     },
                     showMessage: function(message) {
-                        //alert('message: ' + message);
+                        alert(message);
                     }
                 });
             }

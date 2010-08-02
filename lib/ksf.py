@@ -69,6 +69,7 @@ class KSFProcessor(object):
         self.colors = {}
         self.indicators = {}
         self.parse_colors = parse_colors
+        self._all_colors = []
 
         if ksf_data:
             self.load_data(ksf_data)
@@ -96,18 +97,36 @@ class KSFProcessor(object):
         f.close()
         self.load_data(data)
 
+    def get_all_colors(self, format='html_hex'):
+        """ Returns an array of all the colors in the scheme. Possible formats:  html_hex, rgb, bgr"""
+        allcolors = []
+        for color in self._all_colors:
+            if format == 'html_hex':
+                c = color.get_html_hex()
+            elif format == 'rgb':
+                c = color.get_rgb()
+            elif format == 'bgr':
+                c = color.get_bgr()
+            # Append if value and not already present
+            if c and not c in allcolors:
+                allcolors.append(c)
+        return allcolors
+
     def _load_child_color(self, iter, parent_key, child_key):
         if child_key in iter[parent_key]:
+            if iter[parent_key][child_key] == 'None': return None
             iter[parent_key][child_key] = KSFColor(iter[parent_key][child_key])
+            self._all_colors.append(iter[parent_key][child_key])
 
     def _parse_version4(self, ksf_data):
         # Enumerate sections
         for section in ksf_data.split('\n\n'):
             m = re.search('([\w]+)(?: )?=(?: )?(.+)', section, DOTALL)
             if m:
-                # Format true/false as strings
+                # Format data strings
                 raw = m.group(2).strip()
                 raw = raw.replace('True', "'True'").replace('False', "'False'")
+                raw = raw.replace('None', "''")
 
                 section = m.group(1)
                 json = JSON(strict=False)
@@ -145,6 +164,7 @@ class KSFProcessor(object):
                     if self.parse_colors:
                         for key,value in self.colors.items():
                             self.colors[key] = KSFColor(self.colors[key])
+                            self._all_colors.append(self.colors[key])
 
                 elif section == 'Indicators':
                     self.indicators = data
