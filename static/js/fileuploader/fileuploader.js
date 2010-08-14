@@ -30,6 +30,7 @@ qq.FileUploader = function(o){
         sizeLimit: 0,
         onSubmit: function(id, fileName){return true;},
         onComplete: function(id, fileName, responseJSON){},
+        onAllComplete: function(){},
 
         //
         // UI customizations
@@ -261,6 +262,9 @@ qq.FileUploader.prototype = {
             },
             onComplete: function(id, fileName, result){
                 self._filesInProgress--;
+                if (self._filesInProgress == 0) {
+                    self._options.onAllComplete();
+                }
 
                 // mark completed
                 var item = self._getItemByFileId(id);

@@ -9,7 +9,7 @@
 
     <div id="upload" style="display:none;">
         <p>Choose the schemes you'd like to upload. &nbsp;<span class="highlight">Multi-select</span> and <span class="highlight">Drag-and-Drop</span> supported by quality browsers.<p>
-            <h2>Common Color Scheme Locations</h2>
+            <h3>Common Color Scheme Locations</h3>
             <table class="common-locations">
                 <tr>
                     <td class="os">Windows Vista &amp; 7</td>
@@ -36,6 +36,7 @@
     </div>
 
     <div id="active" style="display:none;">
+        <img style="display:none;" src="/static/img/ajax-loader-long.gif" />
     </div>
     &nbsp;
 {% endblock %}
@@ -63,15 +64,84 @@
                             return true;
                         }
                         alert('You must agree to the terms of upload first.');
+                        $('fieldset.agreement').css('background-color', '#EB008B').css('color', 'white').click(function(){
+                            $(this).css('background-color', 'white').css('color', 'inherit');
+                        });
+
                         return false;
                     },
-                    onComplete: function(id, filename, responseJSON) {
-                        //alert('complete');
+                    onComplete: Share.onUploadComplete,
+                    onAllComplete: function() {
+                        $('#upload').fadeOut(500, function() {
+                            $('#active').fadeIn(500);
+                        });
                     },
                     showMessage: function(message) {
                         alert(message);
                     }
                 });
+            },
+
+            onUploadComplete: function(id, filename, json) {
+                var template = '';
+                template += '<div class="upload-preview" style="display:none;">';
+                template += '    <h2 class="filename">%filename%</h2>';
+                template += '    <div class="color-container" style="background-color:%bg%;"></div>';
+                template += '    <fieldset>';
+                template += '       <p>';
+                template += '          <label for="title">Title</label>';
+                template += '          <input type="text" class="title" value="%title%" />';
+                template += '       </p>';
+                template += '       <p>';
+                template += '          <label for="desc">Short Description</label>';
+                template += '          <input type="text" class="desc" value="" />';
+                template += '       </p>';
+                template += '       <p>';
+                template += '           <input type="hidden" class="key" value="%key%" />';
+                template += '           <a class="button save">Save</a>';
+                template += '       </p>';
+                template += '    </fieldset>';
+                template += '</div>';
+
+                template = template.replace('%filename%', json.filename);
+                template = template.replace('%title%', json.title);
+                template = template.replace('%bg%', json.background);
+                template = template.replace('%key%', json.key);
+
+                var upPreview = $(template);
+                var colorContainer = upPreview.find('div.color-container');
+                var key = upPreview.find('input.key').val();
+                $.each(json.colors, function() {
+                   $(colorContainer).append('<div class="color" style="background-color:%color%;" title="%color%"></div>'.replace(/%color%/g, this.toUpperCase()));
+                });
+
+                // Wire up save event
+                upPreview.find('a.save').click(function() {
+                    $(this).attr('disabled', 'disabled');
+                    upPreview.append('<div class="fog"></div>');
+                    upPreview.append('<img class="ajax-loader" src="/static/img/ajax-loader-long.gif" />');
+
+                    var data = {
+                        'key': key,
+                        'title': upPreview.find('input.title').val(),
+                        'description': upPreview.find('input.desc').val(),
+                    }
+                    $.post('/share/save', data, function(data, status, xhr){
+                        // If no more schemes left, redirect to user's schemes view
+                        if ($('#active').find('div.upload-preview').length == 1) {
+                            window.location.href = '/my/schemes';
+                        }
+                        else {
+                            upPreview.find('div.fog').remove();
+                            upPreview.fadeOut(500, function(){
+                                upPreview.remove();
+                            });
+                        }
+                    });
+                });
+
+                $('#active').append(upPreview);
+                upPreview.show();
             }
         }
     }();

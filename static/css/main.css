@@ -1,7 +1,8 @@
 html, body { height: 100%; position: relative; padding: 0; margin: 0; background-color: #E5F7FD; color: #4D4D4D; font-family: Segoe UI, Arial, sans-serif; }
 h1, h2, h3, h4, h5 { margin-top: 0; margin-bottom: 5px; font-weight: normal; }
 h1 { border-bottom: solid 1px #CCCCCC; padding-bottom: 5px; font-size: 28px; }
-h2 { font-size: 18px; color: #00ADEE; }
+h2 { font-size: 24px; color: #00ADEE; }
+h3 { font-size: 18px; color: #00ADEE; }
 
 form { }
 fieldset { border: none; padding: 0; }
@@ -23,9 +24,12 @@ header .user img.gravatar { float: right; height: 36px; width: 36px; margin-left
 
 div.shadow { background: transparent url("/static/img/header-shadow.jpg") repeat-x top; position: absolute; top: 53px; left: 0; width: 100%; height: 20px; }
 div.width-wrapper { width: 1000px; margin-left: auto; margin-right: auto; }
-div.main { background-color: white; width: 950px; padding: 20px 30px; margin-top: 10px; -moz-border-radius: 30px; -webkit-border-radius: 30px; border: 1px solid #CCCCCC; margin-left: auto; margin-right: auto; }
+div.main { background-color: white; width: 950px; padding: 20px 30px; margin-top: 10px; -moz-border-radius: 30px; -webkit-border-radius: 30px; border: 1px solid #CCCCCC; margin-left: auto; margin-right: auto; margin-bottom: 25px; }
 div.content { width: 770px; padding-right: 15px; float: left; }
 div.ad { width: 150px; padding-left: 10px; float: left; }
+
+a.button { background-color: #00ADEE; color: white; cursor: pointer; text-decoration: none; font-size: 18px; padding: 5px 10px; text-align: center; -moz-border-radius: 8px; -webkit-border-radius: 8px; }
+a.button:hover { background-color: #4D4D4D; }
 
 span.clear { clear: both; display: block; height: 1px; }
 span.highlight { color: #EB008B; }
@@ -37,9 +41,26 @@ span.highlight { color: #EB008B; }
 table.common-locations { width: 100%; margin-bottom: 15px; font-size: 13px; }
 table.common-locations td.os { width: 20%; }
 #file-uploader { min-height: 100px; }
+.upload-preview { padding: 20px; border: 1px solid #ccc; margin-bottom: 25px; margin-top: 10px; position: relative; }
+.upload-preview .color-container { clear: both; padding: 5px; height: 20px; float: left; width: 718px; }
+.upload-preview .color-container .color { height: 20px; width: 20px; float: left; margin-right: 5px; cursor: pointer; }
+.upload-preview fieldset { clear: both; }
+.upload-preview fieldset label { display: block; font-size: 18px; margin-bottom: 3px; }
+.upload-preview input { width: 50%; font-size: 20px; width: 724px; padding: 5px; border: solid 1px #00ADEE; }
+.upload-preview a.button { margin-top: 10px; float: right; }
+.upload-preview .fog { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: white; opacity: 0.75; filter: alpha(opacity=75) }
+.upload-preview img.ajax-loader { position: absolute; top: 100px; left: 275px; }
+
+/* Home page */
+.theme { margin-top: 15px; margin-bottom: 35px; }
+.theme .scheme-preview { width: 550px; }
+
+/* Browse page */
+.filter input[type=text] { margin-left: 10px; width: 225px; }
+.filter select { margin-left: 10px; }
 
 /* Common Styles for Code Snipets */
-.scheme-preview { position: relative; width: 55%; }
+.scheme-preview { position: relative; width: 100%; }
 .ksf-common { font-family: monospace; color: black; background-color: white; font-size: 12px; border: solid 1px white; padding: 15px; }
 .ksf-common .line .indent { padding-left: 35px; }
 .ksf-common .line .indent-twice { padding-left: 55px; }
