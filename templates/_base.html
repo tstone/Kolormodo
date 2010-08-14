@@ -5,8 +5,9 @@
     <!--[if IE]><![endif]-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>{% block title_override %}{% block title %}{% endblock %} | Kolormodo.com | Put a little kolor in your kdragon{% endblock %}</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Color schemes for Komodo edit and Komodo IDE">
+    <meta name="author" content="Titus Stone">
+    <meta name="tags" content="color scheme, color theme, komodo, komodo edit, komodo ide">
     <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
     <link rel="shortcut icon" href="/static/favicon.ico">
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
@@ -23,7 +24,7 @@
 
     <div id="container">
         <header>
-            <span>this is kolormodo:</span> color schemes for komodo (edit|ide)
+            <!-- <span>this is kolormodo:</span> color schemes for komodo (edit|ide) -->
         </header>
 
         <div id="main">
@@ -31,7 +32,7 @@
         </div>
 
         <footer>
-            <nav id="user-bar" title="manage your user settings &amp; profile">wastingtape<img class="up-arrow" /></nav>
+            <nav id="user-bar" title="manage your user settings &amp; profile">wastingtape<em class="up-arrow"></em></nav>
             <nav id="share" title="upload &amp; share your color schemes here">upload themes</nav>
             <nav id="about" title="a little about kolormodo.com">about</div>
         </footer>
@@ -57,5 +58,6 @@
       g.async = true; g.src = '//www.google-analytics.com/ga.js'; s.parentNode.insertBefore(g, s);
      })(document, 'script'); */
     </script>
+    <img src="/static/img/tooltip-bg.png" style="display:none" />
 </body>
 </html>

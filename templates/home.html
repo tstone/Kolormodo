@@ -10,7 +10,9 @@
 {% endblock %}
 
 {% block body %}
-    <nav style="margin-bottom:15px;">color schemes<img class="down-arrow" /></nav>
+    <nav id="search">search schemes<em class="down-arrow"></em></nav>
+    <nav id="editor">scheme editor<em class="down-arrow"></em></nav>
+
     <hgroup class="themes">
         {% for theme in themes %}
         <div class="theme-preview">
