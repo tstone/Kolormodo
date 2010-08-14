@@ -1,74 +1,79 @@
 {% extends "_base.html" %}
 {% block title_override %}Kolormodo.com | Komodo Edit and Komodo IDE color schemes{% endblock %}
-
 {% block body_tag %}id="home"{% endblock %}
-{% block body %}
-    <p>ALPHA DEVELOPMENT: This site is currently under development and will contain missing or broken features.  Check back Fall 2010 for a fully featured site. -- <a href="mailto:webmaster@kolormodo.com">webmaster@kolormodo.com</a></p>
+{% block head %}
+<style type="text/css">
+    {% for theme in themes %}
+{{ theme.general_css }}
+    {% endfor %}
+</style>
+{% endblock %}
 
-    <h1>Latest Themes</h1>
-    <div class="themes">
+{% block body %}
+    <nav style="margin-bottom:15px;">color schemes<img class="down-arrow" /></nav>
+    <hgroup class="themes">
         {% for theme in themes %}
-            <div class="theme">
-                <style type="text/css">
-                    {{ theme.general_css }}
-                </style>
-                <h2>{{ theme.title }}</h2>
-                <div class="scheme-preview" id="cs-{{ theme.key.id }}">
-                    <div class="ksf-common python">
-                        <div class="line">
-                            <span class="ksf-linenumbers">1.</span>
-                            <span class="line-content">
-                                <span class="ksf-keywords">import</span>&nbsp;<span class="ksf-identifiers">math</span>
+        <div class="theme-preview">
+            <article id="cs-{{ theme.key.id }}" title="{{ theme.title }}">
+                <div class="ksf-common python">
+                    <div class="ksf-linenumbers">
+                        <span>1.</span>
+                        <span>2.</span>
+                        <span>3.</span>
+                        <span>4.</span>
+                        <span>5.</span>
+                        <span>6.</span>
+                        <span>7.</span>
+                    </div>
+                    <div>
+                        <span class="line-content">
+                            <span class="ksf-keywords">import</span>&nbsp;<span class="ksf-identifiers">math</span>
+                        </span>
+                    </div>
+                    <div>
+                        <span class="line-content">
+                            <span class="ksf-keywords">class</span>&nbsp;<span class="ksf-classes">Class</span>:
+                        </span>
+                    </div>
+                    <div>
+                        <span class="line-content indent">
+                            <span class="ksf-strings">""" this is a docstring """</span>
+                        </span>
+                    </div>
+                    <div>
+                        <span class="line-content indent">
+                            <span class="ksf-keywords">def</span>&nbsp;<span class="ksf-functions">__init__</span><span class="ksf-operators">(</span><span class="ksf-identifiers">self</span>,&nbsp;<span class="ksf-identifiers">arg</span><span class="ksf-operators">)</span>:
+                        </span>
+                    </div>
+                    <div>
+                        <span class="line-content indent-twice">
+                            <span class="ksf-identifiers">self</span>.<span class="ksf-identifiers">f</span>
+                            <span class="ksf-operators">=</span>&nbsp;<span class="ksf-identifiers">arg</span>
+                            <span class="ksf-operators">+</span>&nbsp;<span class="ksf-identifiers">math</span>.<span class="ksf-identifiers">cos</span><span class="ksf-operators">(</span><span class="ksf-identifiers">arg</span>
+                            <span class="ksf-operators">+</span>&nbsp;<span class="ksf-identifiers">arg</span><span class="ksf-operators">)</span>
+                        </span>
+                    </div>
+                    <div>
+                        <span class="line-content indent-twice ksf-line-highlight">
+                            <span class="ksf-identifiers">s</span>&nbsp;<span class="ksf-operators">=</span>
+                            <span class="ksf-strings">'Hello World!'</span>
+                            <span class="ksf-comments"># one line comment</span>
+                        </span>
+                    </div>
+                    <div>
+                        <span class="line-content indent-twice">
+                            <span class="ksf-identifiers">url</span>&nbsp;<span class="ksf-operators">=</span>
+                            <span class="ksf-selected">
+                                <span class="ksf-identifiers">escape</span><span class="ksf-operators">(</span><span class="ksf-strings">"highlighted text"</span><span class="ksf-operators">)</span>
                             </span>
-                        </div>
-                        <div class="line">
-                            <span class="ksf-linenumbers">2.</span>
-                            <span class="line-content">
-                                <span class="ksf-keywords">class</span>&nbsp;<span class="ksf-classes">Class</span>:
-                            </span>
-                        </div>
-                        <div class="line">
-                            <span class="ksf-linenumbers">3.</span>
-                            <span class="line-content indent">
-                                <span class="ksf-strings">""" this is a docstring """</span>
-                            </span>
-                        </div>
-                        <div class="line">
-                            <span class="ksf-linenumbers">4.</span>
-                            <span class="line-content indent">
-                                <span class="ksf-keywords">def</span>&nbsp;<span class="ksf-functions">__init__</span><span class="ksf-operators">(</span><span class="ksf-identifiers">self</span>,&nbsp;<span class="ksf-identifiers">arg</span><span class="ksf-operators">)</span>:
-                            </span>
-                        </div>
-                        <div class="line">
-                            <span class="ksf-linenumbers">5.</span>
-                            <span class="line-content indent-twice">
-                                <span class="ksf-identifiers">self</span>.<span class="ksf-identifiers">f</span>
-                                <span class="ksf-operators">=</span>&nbsp;<span class="ksf-identifiers">arg</span>
-                                <span class="ksf-operators">+</span>&nbsp;<span class="ksf-identifiers">math</span>.<span class="ksf-identifiers">cos</span><span class="ksf-operators">(</span><span class="ksf-identifiers">arg</span>
-                                <span class="ksf-operators">+</span>&nbsp;<span class="ksf-identifiers">arg</span><span class="ksf-operators">)</span>
-                            </span>
-                        </div>
-                        <div class="line">
-                            <span class="ksf-linenumbers">6.</span>
-                            <span class="line-content indent-twice ksf-line-highlight">
-                                <span class="ksf-identifiers">s</span>&nbsp;<span class="ksf-operators">=</span>
-                                <span class="ksf-strings">'Hello World!'</span>
-                                <span class="ksf-comments"># one line comment</span>
-                            </span>
-                        </div>
-                        <div class="line">
-                            <span class="ksf-linenumbers">7.</span>
-                            <span class="line-content indent-twice">
-                                <span class="ksf-identifiers">url</span>&nbsp;<span class="ksf-operators">=</span>
-                                <span class="ksf-selected">
-                                    <span class="ksf-identifiers">escape</span><span class="ksf-operators">(</span><span class="ksf-strings">"highlighted text"</span><span class="ksf-operators">)</span>
-                                </span>
-                            </span>
-                        </div>
+                        </span>
                     </div>
                 </div>
-            </div>
+            </article>
+        </div>
         {% endfor %}
-    </div>
+    </hgroup>
+    <div id="arrow-left" class="nav-arrow"><a href="#Left" class="left"></a></div>
+    <div id="arrow-right" class="nav-arrow"><a href="#Right" class="right"></a></div>
 
 {% endblock %}

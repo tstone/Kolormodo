@@ -220,7 +220,7 @@ class KSFProcessor(object):
                             self._load_child_color(self.indicators, key, 'back')
 
 
-    def build_css(self, language=None, css_prefix=''):
+    def build_css(self, language=None, css_prefix='', skip_font_size=False, skip_font_family=False):
         css = ''
         if css_prefix:
             css_prefix += ' '     # Add space for proper CSS
@@ -277,9 +277,11 @@ class KSFProcessor(object):
                         elif prop == 'italic':
                             s += formatStyle(styles[style], prop, 'font-style')
                         elif prop == 'face':
-                            s += formatStyle(styles[style], prop, 'font-family')
+                            if not skip_font_family:
+                                s += formatStyle(styles[style], prop, 'font-family')
                         elif prop == 'size':
-                            s += formatStyle(styles[style], prop, 'font-size')
+                            if not skip_font_size:
+                                s += formatStyle(styles[style], prop, 'font-size')
 
                 if s:
                     css += '%s.ksf-%s { %s}\n' % (

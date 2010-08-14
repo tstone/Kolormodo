@@ -34,12 +34,12 @@ class DataLayer(object):
         )
         # Save to generate ID
         cs.put()
-        cs.general_css = ksf.build_css(css_prefix='#cs-%s' % cs.key().id())
+        cs.general_css = ksf.build_css(css_prefix='#cs-%s' % cs.key().id(), skip_font_size=True)
 
         # Build dynamic property values
         for lang in langs:
             prop = property_safe_name(lang)
-            value = ksf.build_css(language=lang, css_prefix='#cs-%s' % cs.key().id())
+            value = ksf.build_css(language=lang, css_prefix='#cs-%s' % cs.key().id(), skip_font_size=True)
             setattr(cs, '%s_css' % prop, db.Text(value))
         cs.put()
 

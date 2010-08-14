@@ -17,7 +17,7 @@ from urllib import unquote
 import demjson as json
 
 DATALAYER = DataLayer()
-webapp_template.register_template_library('tempaltetags.general')
+#webapp_template.register_template_library('tempaltetags.general')
 
 class BaseHandler(webapp.RequestHandler):
     def __init__(self, *args, **kwargs):

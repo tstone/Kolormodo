@@ -46,10 +46,8 @@
 <script type="text/javascript" src="/static/js/fileuploader/fileuploader.js"></script>
 <script type="text/javascript">
     // Stored temporarily here while in development, move to external file once it's more stabalized
-    google.setOnLoadCallback(function() {
-      $(function() {
-            Share.initUploader();
-      });
+    $(function() {
+          Share.initUploader();
     });
     var Share = function() {
         return {
