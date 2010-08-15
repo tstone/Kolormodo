@@ -57,17 +57,22 @@ button {  width: auto; overflow: visible; }
 
  /* Primary Styles */
 html { background-color: #1A1A1A; height: 100%; }
-body { width: 1000px; margin: 0 auto; background-color: #1C1C1C; border-left: solid 2px #262626; border-right: solid 2px #262626; height: 100%; font-family: Trebuchet MS, Trebuchet, Helvetica, Arial, sans-serif; color: #E6E6E6; padding: 0 15px; }
-header { display: block; height: 120px; background: transparent url("/static/img/header.png") no-repeat top center; }
+body { width: 1000px; margin: 0 auto; background: #1C1C1C url("/static/img/header.png") no-repeat top center; border-left: solid 2px #262626; border-right: solid 2px #262626; height: 100%; font-family: Trebuchet MS, Trebuchet, Helvetica, Arial, sans-serif; color: #E6E6E6; padding: 0 15px; }
+header { display: block; height: 120px; }
 header span { font-weight: bold; }
 footer { clear: both; bottom: 20px; width:1000px; position: absolute; }
 footer > nav { float: right; margin-left: 10px; }
 footer #user-bar { width: 200px; }
 footer #share { width: 150px; }
 footer #about { width: 100px; }
+img.footer { position: absolute; bottom: 0; }
+h1 { font-size: 28px; text-transform: uppercase; margin-bottom: 10px; }
+h2 { font-size: 23px; text-transform: uppercase; margin-bottom: 5px; }
+h3 { font-size: 18px; text-transform: uppercase; margin-bottom: 5px; color: #EC297B; }
 
+span.clear { display: block; height: 1px; margin-top: 10px; margin-bottom: 10px; clear: both; }
+span.highlight { color: #00B0D8; }
 .tooltip { display:none; background:transparent url("/static/img/tooltip-bg.png"); font-size:12px; height: 60px; width: 143px; padding: 25px 25px 0 25px; color: #fff; text-align: center; }
-
 .themes { margin-left: 7px; padding-top: 15px; clear: both; }
 .themes .theme-preview { height: 168px; width: 330px; float: left; position: relative; background: transparent url("/static/img/theme-preview-bg.png") no-repeat 0 0; }
 .themes .theme-preview-hover { background-position: -332px -3px; }
@@ -112,12 +117,26 @@ nav.down em.left-arrow { background-position: -264px 0; }
 #search { width: 468px; margin-right: 20px; float: left; }
 #editor { width: 468px; float: left; }
 
-/*
-.nav-arrow-left { position: absolute; display: block; height: 52px; width: 52px; top: 375px; right: 50%; margin-right: 490px; background: transparent url("/static/img/nav-arrow-sprite.png") no-repeat center center; }
-.nav-arrow-left-hover { background-image: url("/static/img/nav-arrow-left-hover.png"); }
-.nav-arrow-right { position: absolute; display: block; height: 52px; width: 52px; top: 375px; left: 50%; margin-left: 490px; background: transparent url("/static/img/nav-arrow-right.png") no-repeat center center; }
-.nav-arrow-right-hover { background-image: url("/static/img/nav-arrow-right-hover.png"); }
-*/
+.col { background-color: #262626; border: solid 1px #333333; padding: 15px; -moz-border-radius: 10px; border-radius: 10px; }
+
+/* Sharing page */
+.share { padding: 25px; }
+.agreement { padding: 10px; margin-bottom: 15px; border: solid 1px #333333; margin-top: 20px; margin-bottom: 20px; }
+.agreement input { float: left; }
+.agreement label { font-size: 14px; margin-left: 30px; display: block; }
+table.common-locations { width: 100%; margin-bottom: 15px; font-size: 13px; }
+table.common-locations td.os { width: 120px; }
+table.common-locations td { padding-bottom: 10px; }
+#file-uploader { min-height: 80px; }
+.upload-preview { padding: 20px; border: 1px solid #333333; margin-bottom: 25px; margin-top: 10px; position: relative; }
+.upload-preview .color-container { clear: both; padding: 5px; height: 20px; float: left; width: 718px; }
+.upload-preview .color-container .color { height: 20px; width: 20px; float: left; margin-right: 5px; cursor: pointer; }
+.upload-preview fieldset { clear: both; }
+.upload-preview fieldset label { display: block; font-size: 18px; margin-bottom: 3px; }
+.upload-preview input { width: 50%; font-size: 20px; width: 724px; padding: 5px; border: solid 1px #00ADEE; }
+.upload-preview a.button { margin-top: 10px; float: right; }
+.upload-preview .fog { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #1C1C1C; opacity: 0.75; filter: alpha(opacity=75) }
+.upload-preview img.ajax-loader { position: absolute; top: 100px; left: 275px; }
 
 /*
  * print styles
