@@ -9,6 +9,16 @@ var AjaxLoading = function() {
     }
 }();
 
+// Python style getattr
+var getattr = function(dict, attr, deflt) {
+    try
+    {
+        return dict[attr]
+    }
+    catch (e) { }
+    return deflt;
+}
+
 // *** Main theme browser ***********************************************************************************************
 var ThemeBrowser = function() {
   var $tb = null;
@@ -18,7 +28,6 @@ var ThemeBrowser = function() {
   var $rightBuffer = [];
   var $langTemplate = '';
 
-  var columns = 3;
   var schemeTemplate = '';
   schemeTemplate += '<div class="theme-preview">\n';
   schemeTemplate += '   <style type="text/css">';
@@ -53,7 +62,22 @@ var ThemeBrowser = function() {
             }, 250);
         });
 
-        ThemeBrowser.fetchThemeData();
+        // Load previous URL (if present)
+        $.address.init(function(event) {
+            var pathNames = $.address.pathNames();
+            var view = pathNames[0];
+
+            switch (view) {
+                case 'theme':
+                    break;
+                case 'browse':
+                    ThemeBrowser.fetchThemeData({ startWith: pathNames[1] });
+                    break;
+                default:
+                    ThemeBrowser.fetchThemeData();
+                    break;
+            }
+        });
     },
     setBrowserHeight: function(callback) {
         var vpheight = $(window).height();
@@ -81,16 +105,14 @@ var ThemeBrowser = function() {
             var shouldbe = $displayRows * 3;
             if ($middleBuffer.length > shouldbe)
             {
-                var diff = $middleBuffer.length - shouldbe;
-                for (var i=$middleBuffer.length; i > shouldbe; i--)
+                for (var i=$middleBuffer.length; i>shouldbe; i--)
                 {
                     $rightBuffer.unshift($middleBuffer.pop());
                 }
             }
             else if ($middleBuffer.length < shouldbe && $rightBuffer.length > 0)
             {
-                var dff = shouldbe - $middleBuffer.length;
-                for (var i=0; i < shouldbe; i++)
+                for (var j=0; j<shouldbe; j++)
                 {
                     if ($rightBuffer.length > 0)
                     {
@@ -112,12 +134,19 @@ var ThemeBrowser = function() {
             }
         }
     },
+    getCurrentThemeOffset: function() {
+        return $($tb.find('article').get(0)).attr('id').substring(3);
+    },
     leftArrowClick: function() {
-        ThemeBrowser.shiftLeft();
+        ThemeBrowser.shiftLeft(function() {
+            $.address.value('/browse/' + ThemeBrowser.getCurrentThemeOffset());
+        });
         return false;
     },
     rightArrowClick: function() {
-        ThemeBrowser.shiftRight();
+        ThemeBrowser.shiftRight(function() {
+            $.address.value('/browse/' + ThemeBrowser.getCurrentThemeOffset());
+        });
         return false;
     },
     hideControlArrows: function(callback) {
@@ -128,7 +157,14 @@ var ThemeBrowser = function() {
         $('#arrow-left').clearQueue().fadeIn(750);
         $('#arrow-right').clearQueue().fadeIn(750, callback);
     },
-    fetchThemeData: function() {
+    fetchThemeData: function(params) {
+        params = params || {};
+        $.extend(true, {
+            startWith: -1,
+            callback: function() {}
+        }, params);
+
+        log('Fetching theme data from server...');
         AjaxLoading.show();
         $.ajax({
             type: 'GET',
@@ -141,19 +177,15 @@ var ThemeBrowser = function() {
             success: function(data, status, xhr) {
                 if (data.template) { $langTemplate = data.template; }
                 if (data.schemes) {
-                    var total = columns * $displayRows;
-                    var inc = data.schemes;
-                    if (inc.length > total) {
-                        for (var i=0; i<total; i++) {
-                            $middleBuffer.push(inc.shift());
-                        }
-                        var temp = inc.concat($rightBuffer);
-                        $rightBuffer = temp;
+                    // Set start
+                    if (params.startWith > 0) {
+                        ThemeBrowser.setAtThemeId(params.startWith, data.schemes);
                     }
                     else {
-                        $middleBuffer = inc;
+                        ThemeBrowser.setAtThemeId(data.schemes[0].id, data.schemes);
                     }
-                    ThemeBrowser.updateThemeView();
+                    // Display
+                    ThemeBrowser.updateThemeView(params.callback);
                 }
             },
             error: function(data, status, xhr) {
@@ -164,7 +196,8 @@ var ThemeBrowser = function() {
             }
         });
     },
-    updateThemeView: function() {
+    updateThemeView: function(callback) {
+        callback = callback || function(){}
         $tb.fadeOut(150, function() {
             // Build new elements
             $tb.children().remove();
@@ -178,7 +211,7 @@ var ThemeBrowser = function() {
                 $tb.append(html);
             });
             // Adjust visibilty of arrow controls
-            if ($leftBuffer.length == 0 && $rightBuffer.length == 0) {
+            if ($leftBuffer.length === 0 && $rightBuffer.length === 0) {
                 ThemeBrowser.hideControlArrows();
             }
             else {
@@ -187,10 +220,42 @@ var ThemeBrowser = function() {
             // Activate hover effects
             $('.themes .theme-preview').hoverClass('theme-preview-hover');
             // Fade back in
-            $tb.fadeIn(150);
+            $tb.fadeIn(150, callback);
         });
     },
-    shiftRight: function() {
+    setAtThemeId: function(themeId, values) {
+        // themeId -- where to start
+        // Values (optional) -- array of values to use
+        log('setting to theme Id #' + themeId);
+        themeId = Number(themeId || 0);
+
+        // If values aren't given, concat our 3 buffers together and use those
+        if (typeof(values) === 'undefined' && values === null) {
+            values = $leftBuffer.concat($middleBuffer, $rightBuffer);
+        }
+
+        // Set left
+        while (values.length > 0) {
+            if (Number(values[0].id) === themeId) { break; }
+            $leftBuffer.push(values.shift());
+        }
+        log(values.length);
+
+        // Set middle & right
+        var perPage = Number($displayRows * 3);
+        if(values.length >= perPage) {
+            $middleBuffer = values.slice(0, perPage);
+            $rightBuffer = values.slice(perPage);
+        }
+        else {
+            $middleBuffer = values;
+            var diff = perPage - $middleBuffer.length;
+            var offset = $leftBuffer.length - diff;
+            $middleBuffer = $middleBuffer.concat($leftBuffer.slice(offset).reverse());
+        }
+    },
+    shiftRight: function(callback) {
+        callback = callback || function(){}
         if ($rightBuffer.length > 0) {
             // Middle -> Left
             ThemeBrowser.shift($middleBuffer, $leftBuffer);
@@ -200,11 +265,12 @@ var ThemeBrowser = function() {
         else {
             ThemeBrowser.reverseShift($leftBuffer, $rightBuffer);
             ThemeBrowser.shiftRight();
+            //$pagingOffset = 0;
         }
-        ThemeBrowser.updateThemeView();
-
+        ThemeBrowser.updateThemeView(callback);
     },
-    shiftLeft: function() {
+    shiftLeft: function(callback) {
+        callback = callback || function(){}
         if ($leftBuffer.length > 0) {
             // Middle -> Right
             ThemeBrowser.shift($middleBuffer, $rightBuffer);
@@ -215,15 +281,16 @@ var ThemeBrowser = function() {
             ThemeBrowser.reverseShift($rightBuffer, $leftBuffer);
             ThemeBrowser.shiftLeft();
         }
-        ThemeBrowser.updateThemeView();
+        ThemeBrowser.updateThemeView(callback);
     },
     safeShiftLength: function(src, dest, safelen) {
         var count = 0;
         if (typeof(safelen) !== 'undefined') {
             if (safelen) {
-                count = columns * $displayRows;
-                if (src.length < count)
+                count = $displayRows * 3;
+                if (src.length < count) {
                     count = src.length;
+                }
             }
             else {
                 count = src.length;
