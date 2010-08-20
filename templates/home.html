@@ -14,68 +14,25 @@
     <nav id="editor">scheme editor<em class="down-arrow"></em></nav>
 
     <hgroup class="themes">
-        {% for theme in themes %}
-        <div class="theme-preview">
-            <article id="cs-{{ theme.key.id }}" title="{{ theme.title }}">
-                <div class="ksf-common python">
-                    <div class="ksf-linenumbers">
-                        <span>1.</span>
-                        <span>2.</span>
-                        <span>3.</span>
-                        <span>4.</span>
-                        <span>5.</span>
-                        <span>6.</span>
-                        <span>7.</span>
-                    </div>
-                    <div>
-                        <span class="line-content">
-                            <span class="ksf-keywords">import</span>&nbsp;<span class="ksf-identifiers">math</span>
-                        </span>
-                    </div>
-                    <div>
-                        <span class="line-content">
-                            <span class="ksf-keywords">class</span>&nbsp;<span class="ksf-classes">Class</span>:
-                        </span>
-                    </div>
-                    <div>
-                        <span class="line-content indent">
-                            <span class="ksf-strings">""" this is a docstring """</span>
-                        </span>
-                    </div>
-                    <div>
-                        <span class="line-content indent">
-                            <span class="ksf-keywords">def</span>&nbsp;<span class="ksf-functions">__init__</span><span class="ksf-operators">(</span><span class="ksf-identifiers">self</span>,&nbsp;<span class="ksf-identifiers">arg</span><span class="ksf-operators">)</span>:
-                        </span>
-                    </div>
-                    <div>
-                        <span class="line-content indent-twice">
-                            <span class="ksf-identifiers">self</span>.<span class="ksf-identifiers">f</span>
-                            <span class="ksf-operators">=</span>&nbsp;<span class="ksf-identifiers">arg</span>
-                            <span class="ksf-operators">+</span>&nbsp;<span class="ksf-identifiers">math</span>.<span class="ksf-identifiers">cos</span><span class="ksf-operators">(</span><span class="ksf-identifiers">arg</span>
-                            <span class="ksf-operators">+</span>&nbsp;<span class="ksf-identifiers">arg</span><span class="ksf-operators">)</span>
-                        </span>
-                    </div>
-                    <div>
-                        <span class="line-content indent-twice ksf-line-highlight">
-                            <span class="ksf-identifiers">s</span>&nbsp;<span class="ksf-operators">=</span>
-                            <span class="ksf-strings">'Hello World!'</span>
-                            <span class="ksf-comments"># one line comment</span>
-                        </span>
-                    </div>
-                    <div>
-                        <span class="line-content indent-twice">
-                            <span class="ksf-identifiers">url</span>&nbsp;<span class="ksf-operators">=</span>
-                            <span class="ksf-selected">
-                                <span class="ksf-identifiers">escape</span><span class="ksf-operators">(</span><span class="ksf-strings">"highlighted text"</span><span class="ksf-operators">)</span>
-                            </span>
-                        </span>
-                    </div>
-                </div>
-            </article>
-        </div>
-        {% endfor %}
+        <span>Loading color themes.  Please wait...</span>
     </hgroup>
+
+    <hgroup class="ads">
+        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
+        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
+        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
+        <!-- <aside class="two empty"></aside> -->
+    </hgroup>
+
     <div id="arrow-left" class="nav-arrow"><a href="#Left" class="left"></a></div>
     <div id="arrow-right" class="nav-arrow"><a href="#Right" class="right"></a></div>
 
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(function() {
+            $('hgroup.themes').themeBrowser();
+        });
+    </script>
 {% endblock %}

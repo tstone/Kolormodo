@@ -15,6 +15,7 @@ from decorators import authenticated
 from db.data import DataLayer
 from urllib import unquote
 import demjson as json
+import logging
 
 DATALAYER = DataLayer()
 #webapp_template.register_template_library('tempaltetags.general')
@@ -22,6 +23,7 @@ DATALAYER = DataLayer()
 class BaseHandler(webapp.RequestHandler):
     def __init__(self, *args, **kwargs):
         self.data = DATALAYER
+        self.template_path = os.path.join(os.path.dirname(__file__), 'templates/')
         super(BaseHandler, self).__init__(*args, **kwargs)
 
     def get_current_user(self):
@@ -34,7 +36,8 @@ class BaseHandler(webapp.RequestHandler):
 
     def render_string(self, template=None, values={}):
         """Render a given template to a string"""
-        path = os.path.join(os.path.dirname(__file__), 'templates/%s' % template)
+        path = os.path.join(self.template_path, template)
+        logging.debug(path)
         return webapp_template.render(path, values)
 
     def render_return(self, template=None, values={}):
@@ -45,8 +48,8 @@ class BaseHandler(webapp.RequestHandler):
 
 class HomeHandler(BaseHandler):
     def get(self):
-        schemes = self.data.get_latest_colorschemes()
-        self.render_return(template='home.html', values={ 'themes':schemes })
+        #schemes = self.data.get_latest_colorschemes(12, 0)
+        self.render_return(template='home.html')
 
 
 class BrowseHandler(BaseHandler):
@@ -83,15 +86,12 @@ class ShareSaveHandler(BaseHandler):
 class ShareUploadHandler(BaseHandler):
     """Process incoming files destined for sharing"""
     def post(self):
-        self.response.headers['Content-Type'] = 'application/json'
-
         # TODO: Check for authenticated
         filename = str(self.request.get('qqfile'))
         data = unquote(self.request.body).replace('+', ' ')
 
         #try:
         cs = self.data.new_colorscheme(data=data, user=users.get_current_user(), filename=filename)
-
         resp = {
             'success':True,
             'title': cs.title,
@@ -101,10 +101,57 @@ class ShareUploadHandler(BaseHandler):
             'filename': filename,
             'key': str(cs.key().id()),
         }
+        self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(json.encode(resp))
         #except:
-        #    self.response.out.write(json.encode({ 'succes':False }))
+        #    self.response.out.write(json.encode({ 'success':False }))
 
+
+class ApiGetThemesHandler(BaseHandler):
+    def get(self):
+        """
+        PARAMETERS:
+        format = json        - Return data type (only json supported right now)
+        template = lang      - Language of template to return.  Not returned if ommitted
+        order =
+        filter =
+
+        RETURN:
+        {
+            'template': '<html> for given language,
+            'schemes: [
+                {
+                    'title', 'css', 'desc'
+                }
+            ]
+        }
+        """
+
+        format = self.request.get('format', 'json')
+        template = self.request.get('template', None)
+        resp = {}
+
+        if template:
+            # This has the looks of a bad security problem
+            template = template.replace('/', '').replace('..', '')
+            f = file(os.path.join(self.template_path, 'lang-snippets/%s.html' % template))
+            resp['template'] = f.read()
+            resp['lang'] = template
+            f.close()
+
+        schemes = self.data.get_latest_colorschemes(12, 0)
+        resp['schemes'] = []
+        for scheme in schemes:
+            resp['schemes'].append({
+                'title': scheme.title,
+                'desc': scheme.description,
+                'css': scheme.general_css,
+                'id': scheme.key().id(),
+            })
+
+        if format == 'json':
+            self.response.headers['Content-Type'] = 'application/json'
+            self.response.out.write(json.encode(resp))
 
 
 ROUTES = [
@@ -113,6 +160,7 @@ ROUTES = [
     ('/share', ShareHandler),
     ('/create', CreateHandler),
     ('/browse', BrowseHandler),
+    ('/api/get-themes', ApiGetThemesHandler),
     ('/', HomeHandler),
 ]
 

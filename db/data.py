@@ -45,7 +45,6 @@ class DataLayer(object):
 
         return cs
 
-
     def update_colorscheme(self, id, **kwargs):
         """Save the title and description from the share page"""
         cs = ColorScheme.get_by_id(int(id))
@@ -57,5 +56,5 @@ class DataLayer(object):
                     pass
             cs.put()
 
-    def get_latest_colorschemes(self):
-        return ColorScheme.all().order('-published').fetch(12,0)
+    def get_latest_colorschemes(self, count, offset):
+        return ColorScheme.all().order('-published').fetch(count, offset)

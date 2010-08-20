@@ -24,7 +24,7 @@
 
     <div id="container">
         <header>
-            <!-- <span>this is kolormodo:</span> color schemes for komodo (edit|ide) -->
+            <img id="ajax-loading" src="/static/img/ajax-loader-balls.gif" />
         </header>
 
         <div id="main">
@@ -40,8 +40,8 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script>!window.jQuery && document.write('<script src="/static/js/jquery-1.4.2.min.js"><\/script>')</script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
     <script src="http://cdn.jquerytools.org/1.2.3/jquery.tools.min.js"></script>
-    <!-- <script type="text/javascript" src="/static/js/jquery.form.js"></script> -->
     <script src="/static/js/plugins.js?v=1"></script>
     <script src="/static/js/script.js?v=1"></script>
     {% block script %}{% endblock %}
@@ -51,12 +51,13 @@
     <script src="/static/js/profiling/yahoo-profiling.min.js?v=1"></script>
     <script src="/static/js/profiling/config.js?v=1"></script>
     <script>
-     // TODO: setup google analytics
-     /* var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
-     (function(d, t) {
-      var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
-      g.async = true; g.src = '//www.google-analytics.com/ga.js'; s.parentNode.insertBefore(g, s);
-     })(document, 'script'); */
+        if (window.location.href.substring(0, 16) != 'http://localhost') {
+           var _gaq = [['_setAccount', 'UA-17994366-1'], ['_trackPageview']];
+           (function(d, t) {
+            var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+            g.async = true; g.src = '//www.google-analytics.com/ga.js'; s.parentNode.insertBefore(g, s);
+           })(document, 'script');
+        }
     </script>
     <img src="/static/img/tooltip-bg.png" style="display:none" />
 </body>
