@@ -57,21 +57,29 @@ var ThemeBrowser = function() {
         $(window).resize(function() {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
-                ThemeBrowser.setBrowserHeight();
-                ThemeBrowser.updateThemeView();
+                ThemeBrowser.setBrowserHeight(function() {
+                    ThemeBrowser.updateThemeView();
+                });
             }, 250);
         });
 
-        // Load previous URL (if present)
-        $.address.init(function(event) {
+        // Hashed address handling
+        $.address.externalChange(function(event) {
+            log('change');
             var pathNames = $.address.pathNames();
             var view = pathNames[0];
 
-            switch (view) {
+            switch(view) {
                 case 'theme':
                     break;
                 case 'browse':
-                    ThemeBrowser.fetchThemeData({ startWith: pathNames[1] });
+                    var count = pathNames[2] || ($displayRows * 3);
+                    if ($middleBuffer.length > 0) {
+                        ThemeBrowser.setAtThemeId(pathNames[1], count);
+                    }
+                    else {
+                        ThemeBrowser.fetchThemeData({ startWith: pathNames[1], displayCount: count});
+                    }
                     break;
                 default:
                     ThemeBrowser.fetchThemeData();
@@ -80,80 +88,86 @@ var ThemeBrowser = function() {
         });
     },
     setBrowserHeight: function(callback) {
+        callback = callback || function(){};
         var vpheight = $(window).height();
         log('viewport height: ' + vpheight);
 
-        // 884 = body min-height (716) + theme-preview height (168)
-        if (vpheight >= 884) {
-            $displayRows = 3;
-            ThemeBrowser.hideControlArrows(function() {
-                $tb.parent().addClass('three-row');
-            });
-        }
-        else {
-            $displayRows = 2;
-            ThemeBrowser.hideControlArrows(function() {
-                $tb.parent().removeClass('three-row');
-            });
-            // Calling this a 2nd time because of some wierd bug that causes it not to fire when
-            // inside the hideControlArrows callback
-            $tb.parent().removeClass('three-row');
-        }
-        // If we have data in the buffer, adjust it based on our amount of display rows
-        if ($middleBuffer.length > 0)
-        {
-            var shouldbe = $displayRows * 3;
-            if ($middleBuffer.length > shouldbe)
-            {
-                for (var i=$middleBuffer.length; i>shouldbe; i--)
-                {
-                    $rightBuffer.unshift($middleBuffer.pop());
+        var afterHeightAdjust = function() {
+            // If we have data in the buffer, adjust it based on our amount of display rows
+            if ($middleBuffer.length > 0) {
+                var perPage = $displayRows * 3;
+                if ($middleBuffer.length > perPage) {            // Too big
+                    var diff = $middleBuffer.length - perPage;
+                    for (var i=0; i<diff; i++) {
+                        $rightBuffer.unshift($middleBuffer.pop());
+                    }
                 }
-            }
-            else if ($middleBuffer.length < shouldbe && $rightBuffer.length > 0)
-            {
-                for (var j=0; j<shouldbe; j++)
-                {
-                    if ($rightBuffer.length > 0)
-                    {
+                else if ($middleBuffer.length < perPage) {       // Too small
+                    var diff = perPage - $middleBuffer.length;
+                    var counter = 0;
+                    while (counter < diff && $rightBuffer.length > 0) {
                         $middleBuffer.push($rightBuffer.shift());
+                        counter++;
+                    }
+                    if (counter < perPage) {
+                        while(counter < diff && $leftBuffer.length > 0) {
+                            $middleBuffer.push($leftBuffer.pop());
+                            counter++;
+                        }
                     }
                 }
             }
+
+            ThemeBrowser.updateThemeView(function() {
+                // Re-show arrows if there is more data
+                if ($rightBuffer.length > 0 || $leftBuffer.length > 0) {
+                    ThemeBrowser.showControlArrows(callback);
+                }
+                else {
+                    callback();
+                }
+            });
         }
-        // Re-show arrows if there is more data
-        if ($rightBuffer.length > 0 || $leftBuffer.length > 0)
-        {
-            ThemeBrowser.showControlArrows(callback);
+
+        // 884 = body min-height (716) + theme-preview height (168)
+        if (vpheight >= 884) {
+            ThemeBrowser.hideControlArrows(function() {
+                $displayRows = 3;
+                $tb.parent().addClass('three-row');
+                afterHeightAdjust();
+            });
         }
-        else
-        {
-            if (typeof(callback) == 'function')
-            {
-                callback();
-            }
+        else {
+            ThemeBrowser.hideControlArrows(function() {
+                $displayRows = 2;
+                $tb.parent().removeClass('three-row');
+                afterHeightAdjust();
+            });
         }
     },
-    getCurrentThemeOffset: function() {
-        return $($tb.find('article').get(0)).attr('id').substring(3);
+    updateBrowseAddress: function() {
+        var currTheme = $($tb.find('article').get(0)).attr('id').substring(3);
+        $.address.path('/browse/' + currTheme + '/' + $middleBuffer.length);
     },
     leftArrowClick: function() {
         ThemeBrowser.shiftLeft(function() {
-            $.address.value('/browse/' + ThemeBrowser.getCurrentThemeOffset());
+            ThemeBrowser.updateBrowseAddress();
         });
         return false;
     },
     rightArrowClick: function() {
         ThemeBrowser.shiftRight(function() {
-            $.address.value('/browse/' + ThemeBrowser.getCurrentThemeOffset());
+            ThemeBrowser.updateBrowseAddress();
         });
         return false;
     },
     hideControlArrows: function(callback) {
+        callback = callback || function(){};
         $('#arrow-left').clearQueue().fadeOut(750);
         $('#arrow-right').clearQueue().fadeOut(750, callback);
     },
     showControlArrows: function(callback) {
+        callback = callback || function(){};
         $('#arrow-left').clearQueue().fadeIn(750);
         $('#arrow-right').clearQueue().fadeIn(750, callback);
     },
@@ -161,6 +175,7 @@ var ThemeBrowser = function() {
         params = params || {};
         $.extend(true, {
             startWith: -1,
+            displayCount: ($displayRows * 3),
             callback: function() {}
         }, params);
 
@@ -179,13 +194,11 @@ var ThemeBrowser = function() {
                 if (data.schemes) {
                     // Set start
                     if (params.startWith > 0) {
-                        ThemeBrowser.setAtThemeId(params.startWith, data.schemes);
+                        ThemeBrowser.setAtThemeId(params.startWith, params.displayCount, params.callback, data.schemes);
                     }
                     else {
-                        ThemeBrowser.setAtThemeId(data.schemes[0].id, data.schemes);
+                        ThemeBrowser.setAtThemeId(data.schemes[0].id, params.displayCount, params.callback, data.schemes);
                     }
-                    // Display
-                    ThemeBrowser.updateThemeView(params.callback);
                 }
             },
             error: function(data, status, xhr) {
@@ -196,9 +209,20 @@ var ThemeBrowser = function() {
             }
         });
     },
+    hideThemeView: function(callback) {
+        callback = callback || function(){};
+        $tb.fadeOut(150, callback);
+    },
+    showThemeView: function(callback) {
+        callback = callback || function(){};
+        $tb.fadeIn(150,callback);
+    },
+    isThemeViewVisible: function() {
+        return !$tb.css('display', 'none');
+    },
     updateThemeView: function(callback) {
         callback = callback || function(){}
-        $tb.fadeOut(150, function() {
+        var doUpdate = function() {
             // Build new elements
             $tb.children().remove();
             $.each($middleBuffer, function() {
@@ -220,29 +244,39 @@ var ThemeBrowser = function() {
             // Activate hover effects
             $('.themes .theme-preview').hoverClass('theme-preview-hover');
             // Fade back in
-            $tb.fadeIn(150, callback);
-        });
+            ThemeBrowser.showThemeView(callback);
+        }
+        if (ThemeBrowser.isThemeViewVisible()) {
+            ThemeBrowser.hideThemeView(doUpdate);
+        }
+        else {
+            doUpdate();
+        }
     },
-    setAtThemeId: function(themeId, values) {
+    setAtThemeId: function(themeId, displayCount, callback, values) {
         // themeId -- where to start
         // Values (optional) -- array of values to use
         log('setting to theme Id #' + themeId);
         themeId = Number(themeId || 0);
+        displayCount = displayCount || ($displayRows * 3);
+        callback = callback || function(){};
+        values = values || [];
 
         // If values aren't given, concat our 3 buffers together and use those
-        if (typeof(values) === 'undefined' && values === null) {
+        if (values.length === 0) {
             values = $leftBuffer.concat($middleBuffer, $rightBuffer);
+            $leftBuffer = [];
+            $middleBuffer = [];
+            $rightBuffer = [];
         }
-
         // Set left
         while (values.length > 0) {
             if (Number(values[0].id) === themeId) { break; }
             $leftBuffer.push(values.shift());
         }
-        log(values.length);
-
         // Set middle & right
-        var perPage = Number($displayRows * 3);
+        //var perPage = Number($displayRows * 3);
+        perPage = displayCount;
         if(values.length >= perPage) {
             $middleBuffer = values.slice(0, perPage);
             $rightBuffer = values.slice(perPage);
@@ -252,7 +286,10 @@ var ThemeBrowser = function() {
             var diff = perPage - $middleBuffer.length;
             var offset = $leftBuffer.length - diff;
             $middleBuffer = $middleBuffer.concat($leftBuffer.slice(offset).reverse());
+            $leftBuffer = $leftBuffer.slice(0,offset);
         }
+        // Display
+        ThemeBrowser.updateThemeView(callback);
     },
     shiftRight: function(callback) {
         callback = callback || function(){}
