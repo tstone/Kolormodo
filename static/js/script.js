@@ -413,11 +413,17 @@ $.fn.fancyPreview = function() {
 // *** Document Ready ***************************************************************************************************
 $(function() {
 
-  // Enable button behavior
-  $('nav').buttonBehavior('hover', 'down');
-  $('.nav-arrow').buttonBehavior('nav-arrow-hover', 'nav-arrow-down');
+    // Enable button behavior
+    $('nav').buttonBehavior('hover', 'down');
+    $('.nav-arrow').buttonBehavior('nav-arrow-hover', 'nav-arrow-down');
+    $('#user-bar').click(function() {
+        var rel = $(this).attr('rel');
+        if (rel.length  > 0) {
+            window.location.href = rel;
+        }
+    });
 
-  // Enable tooltips
-  $('footer nav').tooltip();
+    // Enable tooltips
+    $('footer nav').tooltip();
 
 });

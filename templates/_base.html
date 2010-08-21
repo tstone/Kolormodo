@@ -38,7 +38,11 @@
     </hgroup>
 
     <footer>
-        <nav id="user-bar" title="manage your user settings &amp; profile">wastingtape<em class="up-arrow"></em></nav>
+        {% if user %}
+            <nav id="user-bar" title="manage your user settings &amp; profile" rel="/me">{{ user.nickname }}<em class="up-arrow"></em></nav>
+        {% else %}
+            <nav id="user-bar" title="manage your user settings &amp; profile" rel="{{ login_url }}">login</nav>
+        {% endif %}
         <nav id="share" title="upload &amp; share your color schemes here">upload themes</nav>
         <nav id="about" title="a little about kolormodo.com">about</nav>
     </footer>

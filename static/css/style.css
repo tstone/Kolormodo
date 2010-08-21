@@ -62,7 +62,7 @@ header { display: block; height: 120px; }
 header span { font-weight: bold; }
 footer { clear: both; bottom: 20px; width:1000px; position: absolute; }
 footer > nav { float: right; margin-left: 10px; }
-footer #user-bar { width: 200px; }
+footer #user-bar { width: 300px; }
 footer #share { width: 150px; }
 footer #about { width: 100px; }
 img.footer { position: absolute; bottom: 0; }

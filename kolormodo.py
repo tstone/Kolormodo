@@ -44,6 +44,9 @@ class BaseHandler(webapp.RequestHandler):
 
     def render_return(self, template=None, values={}):
         """Render the template and return as the respone"""
+        values['user'] = self.get_current_user()
+        if not values['user']:
+            values['login_url'] = self.get_login_url()
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write(self.render_string(template=template, values=values))
 
@@ -74,6 +77,7 @@ class BrowseHandler(BaseHandler):
 class ThemeViewHandler(BaseHandler):
     def get(self, theme_id, slug=None):
         scheme = self.data.get_scheme(theme_id)
+        scheme.increment_views()
 
         # Check users' pref for preferred language viewing
         template = self.get_lang_template('python')
@@ -88,6 +92,8 @@ class ThemeViewHandler(BaseHandler):
 class DownloadHandler(BaseHandler):
     def get(self, theme_id, slug=None):
         scheme = self.data.get_scheme(theme_id)
+        scheme.increment_download()
+
         self.response.headers['Content-Type'] = 'application/ksf'
         self.response.out.write(scheme.raw)
 

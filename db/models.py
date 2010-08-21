@@ -15,6 +15,8 @@ class ColorScheme(db.Expando):
     published = db.DateTimeProperty(auto_now_add=True)
     updated = db.DateTimeProperty(auto_now=True)
     general_css = db.TextProperty()
+    download_count = db.IntegerProperty()
+    view_count = db.IntegerProperty()
 
     @property
     def safe_id(self):
@@ -33,3 +35,19 @@ class ColorScheme(db.Expando):
             lang_css = lang_css.replace('.ksf-', '.%s .ksf-' % safe_lang)
             css += lang_css
         return css
+
+    def increment_views(self):
+        # Google analytics?
+        if self.view_count:
+            self.view_count += 1
+        else:
+            self.view_count = 1
+        self.save()
+
+    def increment_downloads(self):
+        # Google analytics
+        if self.download_count:
+            self.download_count += 1
+        else:
+            self.download_count = 1
+        self.save()
