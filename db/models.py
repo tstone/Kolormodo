@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from google.appengine.ext import db
+from django.template.defaultfilters import slugify
 import helpers
 
 class ColorScheme(db.Expando):
@@ -18,6 +19,10 @@ class ColorScheme(db.Expando):
     @property
     def safe_id(self):
         return self.key().id()
+
+    @property
+    def slug(self):
+        return slugify(self.title)
 
     def all_css(self):
         css = self.general_css

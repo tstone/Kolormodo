@@ -71,6 +71,7 @@ h2 { font-size: 23px; text-transform: uppercase; margin-bottom: 5px; }
 h3 { font-size: 18px; text-transform: uppercase; margin-bottom: 5px; color: #EC297B; }
 select { background-color: #1C1C1C; border: solid 1px #262626; color: white; padding: 5px; font-weight: bold; }
 
+#main { min-height: 416px; }
 span.clear { display: block; height: 1px; margin-top: 10px; margin-bottom: 10px; clear: both; }
 span.highlight { color: #00B0D8; }
 a.clickable-overlay { display: block;  position: absolute; top: 0; left: 0; height: 100%; width: 100%; }
@@ -90,6 +91,7 @@ hgroup.ads { display: block; clear: both; padding-top: 10px; margin-left: 15px; 
 article > div > div { margin-left: 45px; padding: 2px; overflow: hidden; word-wrap: break-word; width: 500px; height: 15px; }
 article > div > div .indent { padding-left: 20px; }
 article > div > div .indent-twice { padding-left: 40px; }
+article > div > div .indent-thrice { padding-left: 60px; }
 article > div > div { position: relative; padding-bottom: 3px; }
 
 .tooltip { display:none; background:transparent url("/static/img/tooltip-bg.png"); font-size:12px; height: 60px; width: 143px; padding: 25px 25px 0 25px; color: #fff; text-align: center; }
@@ -159,10 +161,19 @@ table.common-locations td { padding-bottom: 10px; }
 
 /* Theme single view page */
 .fancy-preview { width: 635px; float: left; margin-right: 25px; }
-.fancy-preview article { position: relative; border: solid 1px #333333; margin-top: 15px; }
-.fancy-preview .nav { text-align: right; }
-.fancy-preview .nav #view-language { width: 200px; }
+.fancy-preview article { position: relative; border: solid 1px #333333; }
+.fancy-preview #view-language { width: 200px; position: absolute; top: 0; right: 0; }
+.fancy-preview > div { margin-top: 15px; position: relative; }
+.fancy-preview > div .twitter { float: left; padding-right: 15px; }
 .scheme-actions { width: 275px; float: left; }
+.scheme-actions > div { margin-bottom: 10px; }
+.scheme-actions > div:last-child { margin-bottom: 0; }
+.scheme-actions a.download { display: block; width: 275px; height: 50px; background: transparent url("/static/img/download-btn.png") no-repeat; }
+.scheme-actions a.download-hover { background-position: -275px 0; }
+.scheme-actions a.download-down { background-position: -550px 0; }
+h1.theme { font-size: 35px; margin-bottom: 0; }
+h2.theme { font-size: 18px; font-weight: normal; text-transform: lowercase; }
+h2.theme span { font-weight: bold; color: #D91C5C; }
 
 /*
  * print styles
@@ -191,3 +202,6 @@ table.common-locations td { padding-bottom: 10px; }
   html { -webkit-text-size-adjust:none; -ms-text-size-adjust:none; }
 
 }
+
+/* Facebook */
+span.connect_widget_not_connected_text { color: white !important; }

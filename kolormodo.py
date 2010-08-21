@@ -55,6 +55,10 @@ class BaseHandler(webapp.RequestHandler):
         f.close()
         return template
 
+    @property
+    def facebook_app_secret(self):
+        return 'ad9cc7197ff82100c1a9e4097f0b6d07'
+
 
 class HomeHandler(BaseHandler):
     def get(self):
@@ -69,20 +73,24 @@ class BrowseHandler(BaseHandler):
 
 class ThemeViewHandler(BaseHandler):
     def get(self, theme_id, slug=None):
-        try:
-            scheme = self.data.get_scheme(theme_id)
+        scheme = self.data.get_scheme(theme_id)
 
-            # Check users' pref for preferred language viewing
-            template = self.get_lang_template('python')
+        # Check users' pref for preferred language viewing
+        template = self.get_lang_template('python')
 
-            self.render_return(template='theme.html', values={
-                'page_title': '%s Color Scheme' % scheme.title,
-                'scheme': scheme,
-                'css': scheme.all_css(),
-                'template': template,
-            })
-        except:
-            pass
+        self.render_return(template='theme.html', values={
+            'page_title': '%s Color Scheme' % scheme.title,
+            'scheme': scheme,
+            'css': scheme.all_css(),
+            'template': template,
+        })
+
+class DownloadHandler(BaseHandler):
+    def get(self, theme_id, slug=None):
+        scheme = self.data.get_scheme(theme_id)
+        self.response.headers['Content-Type'] = 'application/ksf'
+        self.response.out.write(scheme.raw)
+
 
 class CreateHandler(BaseHandler):
     def get(self):
@@ -94,7 +102,6 @@ class ShareHandler(BaseHandler):
     @authenticated
     def get(self):
         self.render_return(template='share.html')
-
 
 class ShareSaveHandler(BaseHandler):
     """Save the title/desc from the sharing page"""
@@ -108,7 +115,6 @@ class ShareSaveHandler(BaseHandler):
         return
         #except:
             #self.response.out.write("{ 'success':false }")
-
 
 class ShareUploadHandler(BaseHandler):
     """Process incoming files destined for sharing"""
@@ -176,6 +182,7 @@ class ApiGetThemesHandler(BaseHandler):
             self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.encode(resp))
 
+
 class ApiGetTemplateHandler(BaseHandler):
     def get(self):
         """
@@ -199,6 +206,8 @@ ROUTES = [
     ('/browse', BrowseHandler),
     ('/theme/(\d+)', ThemeViewHandler),
     ('/theme/(\d+)/(.*)', ThemeViewHandler),
+    ('/download/(\d+)', DownloadHandler),
+    ('/download/(\d+)/(.*)', DownloadHandler),
     ('/api/get-themes', ApiGetThemesHandler),
     ('/api/get-template', ApiGetTemplateHandler),
     ('/', HomeHandler),

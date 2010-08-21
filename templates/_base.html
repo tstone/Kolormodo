@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="en" class="no-js" xmlns:fb="http://www.facebook.com/2008/fbml">
 <head>
     <meta charset="utf-8">
     <!--[if IE]><![endif]-->
@@ -22,21 +22,27 @@
 <!--[if IE 9 ]>    <body class="ie9"> <![endif]-->
 <!--[if (gt IE 9)|!(IE)]><!--> <body> <!--<![endif]-->
 
-    <div id="container">
-        <header>
-            <img id="ajax-loading" src="/static/img/ajax-loader-balls.gif" style="display:none;" />
-        </header>
+    <header>
+        <img id="ajax-loading" src="/static/img/ajax-loader-balls.gif" style="display:none;" />
+    </header>
 
-        <div id="main">
-            {% block body %}{% endblock %}
-        </div>
-
-        <footer>
-            <nav id="user-bar" title="manage your user settings &amp; profile">wastingtape<em class="up-arrow"></em></nav>
-            <nav id="share" title="upload &amp; share your color schemes here">upload themes</nav>
-            <nav id="about" title="a little about kolormodo.com">about</nav>
-        </footer>
+    <div id="main">
+        {% block body %}{% endblock %}
     </div>
+
+    <hgroup class="ads">
+        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
+        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
+        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
+        <!-- <aside class="two empty"></aside> -->
+    </hgroup>
+
+    <footer>
+        <nav id="user-bar" title="manage your user settings &amp; profile">wastingtape<em class="up-arrow"></em></nav>
+        <nav id="share" title="upload &amp; share your color schemes here">upload themes</nav>
+        <nav id="about" title="a little about kolormodo.com">about</nav>
+    </footer>
+    <div id="fb-root"></div>
 
     <!-- This huge splatter of javascript files needs to be cleaned up... -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
@@ -61,6 +67,16 @@
            })(document, 'script');
         }
     </script>
+    <!-- <script>
+        window.fbAsyncInit = function() {
+          FB.init({appId: '148285178523496', status: true, cookie: true, xfbml: true});
+        };
+        (function() {
+          var e = document.createElement('script'); e.async = true;
+          e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+          document.getElementById('fb-root').appendChild(e);
+        }());
+      </script> -->
     <img src="/static/img/tooltip-bg.png" style="display:none" />
 </body>
 </html>
