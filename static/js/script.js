@@ -38,7 +38,7 @@ var ThemeBrowser = function() {
   schemeTemplate += '         %lang-template%';
   schemeTemplate += '      </div>';
   schemeTemplate += '   </article>';
-  schemeTemplate += '   <a href="#TODO" class="clickable-overlay" title="%title%"></a>';
+  schemeTemplate += '   <a href="/theme/%id%/%slug%" class="clickable-overlay" title="%title%"></a>';
   schemeTemplate += '</div>';
 
   return {
@@ -65,12 +65,13 @@ var ThemeBrowser = function() {
 
         // Hashed address handling
         $.address.externalChange(function(event) {
-            log('change');
             var pathNames = $.address.pathNames();
             var view = pathNames[0];
 
             switch(view) {
-                case 'theme':
+                case 'upload':
+                    break;
+                case 'about':
                     break;
                 case 'browse':
                     var count = pathNames[2] || ($displayRows * 3);
@@ -145,6 +146,10 @@ var ThemeBrowser = function() {
             });
         }
     },
+    hideAllViews: function() {
+        ThemeBrowser.hideThemeView();
+        ThemeBrowser.hideSingleView();
+    },
     updateBrowseAddress: function() {
         var currTheme = $($tb.find('article').get(0)).attr('id').substring(3);
         $.address.path('/browse/' + currTheme + '/' + $middleBuffer.length);
@@ -209,6 +214,12 @@ var ThemeBrowser = function() {
             }
         });
     },
+    showSingleView: function() {
+
+    },
+    hideSingleView: function() {
+
+    },
     hideThemeView: function(callback) {
         callback = callback || function(){};
         $tb.fadeOut(150, callback);
@@ -227,11 +238,13 @@ var ThemeBrowser = function() {
             $tb.children().remove();
             $.each($middleBuffer, function() {
                 var scheme = this;
+                var slug = scheme.title.replace(/[\W]/gi,'-').toLowerCase();
                 var html = schemeTemplate;
                 html = html.replace(/%id%/gi, scheme.id);
                 html = html.replace(/%title%/gi, scheme.title);
                 html = html.replace(/%lang-template%/gi, $langTemplate);
                 html = html.replace(/%css%/gi, scheme.css);
+                html = html.replace(/%slug%/gi, slug);
                 $tb.append(html);
             });
             // Adjust visibilty of arrow controls
@@ -358,6 +371,43 @@ var ThemeBrowser = function() {
 $.fn.themeBrowser = function() {
   ThemeBrowser.init($(this).get(0));
   return ThemeBrowser;
+};
+
+// *** Fancy Preview ****************************************************************************************************
+var FancyPreview = function() {
+    var $fp = null;
+
+    return {
+        init: function(elem) {
+            $fp = $(elem);
+
+            // Bind language combo
+            $('#view-language').change(function() {
+                FancyPreview.displayLangTemplate($(this).val());
+            });
+        },
+        displayLangTemplate: function(lang) {
+            lang = lang || 'python';    // python = default language
+            AjaxLoading.show();
+            $.ajax({
+                url: '/api/get-template',
+                data: { lang: lang },
+                dataType: 'json',
+                type: 'GET',
+                success: function(data, status, xhr) {
+                    $fp.find('article').html('<div class="ksf-common ' + data.lang + '">' + data.template + '</div>');
+                },
+                complete: function() {
+                    AjaxLoading.hide();
+                }
+            });
+        }
+    }
+}();
+// jQuery wrapper for FancyPreview
+$.fn.fancyPreview = function() {
+  FancyPreview.init($(this).get(0));
+  return FancyPreview;
 };
 
 // *** Document Ready ***************************************************************************************************

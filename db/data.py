@@ -3,11 +3,7 @@
 from google.appengine.ext import db
 from db.models import *
 from lib.ksf import KSFProcessor, KSFColor
-import re
-
-
-def property_safe_name(string):
-    return re.sub('[^A-Za-z0-9 ]+', '', string.replace(' ','_').replace('+','plus').replace('#','sharp')).lower()
+import helpers
 
 def slugify(self, input):
         return input.replace(' ', '-').lower()
@@ -38,7 +34,7 @@ class DataLayer(object):
 
         # Build dynamic property values
         for lang in langs:
-            prop = property_safe_name(lang)
+            prop = helpers.property_safe_name(lang)
             value = ksf.build_css(language=lang, css_prefix='#cs-%s' % cs.key().id(), skip_font_size=True)
             setattr(cs, '%s_css' % prop, db.Text(value))
         cs.put()
@@ -58,3 +54,6 @@ class DataLayer(object):
 
     def get_latest_colorschemes(self, count, offset):
         return ColorScheme.all().order('-published').fetch(count, offset)
+
+    def get_scheme(self, id):
+        return ColorScheme.get_by_id(int(id))

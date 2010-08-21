@@ -24,7 +24,7 @@
 
     <div id="container">
         <header>
-            <img id="ajax-loading" src="/static/img/ajax-loader-balls.gif" />
+            <img id="ajax-loading" src="/static/img/ajax-loader-balls.gif" style="display:none;" />
         </header>
 
         <div id="main">
@@ -34,14 +34,16 @@
         <footer>
             <nav id="user-bar" title="manage your user settings &amp; profile">wastingtape<em class="up-arrow"></em></nav>
             <nav id="share" title="upload &amp; share your color schemes here">upload themes</nav>
-            <nav id="about" title="a little about kolormodo.com">about</div>
+            <nav id="about" title="a little about kolormodo.com">about</nav>
         </footer>
     </div>
 
+    <!-- This huge splatter of javascript files needs to be cleaned up... -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script>!window.jQuery && document.write('<script src="/static/js/jquery-1.4.2.min.js"><\/script>')</script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
     <script src="http://cdn.jquerytools.org/1.2.3/jquery.tools.min.js"></script>
+    <script src="/static/js/jquery.address-1.2.2.min.js"></script>
     <script src="/static/js/plugins.js?v=1"></script>
     <script src="/static/js/script.js?v=1"></script>
     {% block script %}{% endblock %}

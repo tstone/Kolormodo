@@ -286,7 +286,7 @@ class KSFProcessor(object):
                 if s:
                     css += '%s.ksf-%s { %s}\n' % (
                         css_prefix,
-                        style.replace('-', ' '),
+                        style.replace(' ', '-'),
                         s
                     )
 

@@ -14,8 +14,10 @@ from google.appengine.ext.webapp import template as webapp_template
 from decorators import authenticated
 from db.data import DataLayer
 from urllib import unquote
+import helpers
 import demjson as json
 import logging
+import db.helpers
 
 DATALAYER = DataLayer()
 #webapp_template.register_template_library('tempaltetags.general')
@@ -45,6 +47,14 @@ class BaseHandler(webapp.RequestHandler):
         self.response.headers['Content-Type'] = 'text/html'
         self.response.out.write(self.render_string(template=template, values=values))
 
+    def get_lang_template(self, lang):
+        # This has the looks of a bad security problem
+        lang = db.helpers.property_safe_name(lang)
+        f = file(os.path.join(self.template_path, 'lang-snippets/%s.html' % lang))
+        template = f.read()
+        f.close()
+        return template
+
 
 class HomeHandler(BaseHandler):
     def get(self):
@@ -56,6 +66,23 @@ class BrowseHandler(BaseHandler):
     def get(self):
         self.render_return(template='browse.html')
 
+
+class ThemeViewHandler(BaseHandler):
+    def get(self, theme_id, slug=None):
+        try:
+            scheme = self.data.get_scheme(theme_id)
+
+            # Check users' pref for preferred language viewing
+            template = self.get_lang_template('python')
+
+            self.render_return(template='theme.html', values={
+                'page_title': '%s Color Scheme' % scheme.title,
+                'scheme': scheme,
+                'css': scheme.all_css(),
+                'template': template,
+            })
+        except:
+            pass
 
 class CreateHandler(BaseHandler):
     def get(self):
@@ -132,14 +159,10 @@ class ApiGetThemesHandler(BaseHandler):
         resp = {}
 
         if template:
-            # This has the looks of a bad security problem
-            template = template.replace('/', '').replace('..', '')
-            f = file(os.path.join(self.template_path, 'lang-snippets/%s.html' % template))
-            resp['template'] = f.read()
+            resp['template'] = self.get_lang_template(template)
             resp['lang'] = template
-            f.close()
 
-        schemes = self.data.get_latest_colorschemes(12, 0)
+        schemes = self.data.get_latest_colorschemes(100, 0)
         resp['schemes'] = []
         for scheme in schemes:
             resp['schemes'].append({
@@ -153,6 +176,20 @@ class ApiGetThemesHandler(BaseHandler):
             self.response.headers['Content-Type'] = 'application/json'
             self.response.out.write(json.encode(resp))
 
+class ApiGetTemplateHandler(BaseHandler):
+    def get(self):
+        """
+        PARAMETERS:
+        lang      - Language of template to return.  Not returned if ommitted
+        """
+        lang = self.request.get('lang', 'python')
+        resp = {}
+        resp['template'] = self.get_lang_template(lang)
+        resp['lang'] =db.helpers.property_safe_name(lang)
+
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.encode(resp))
+
 
 ROUTES = [
     ('/share/upload', ShareUploadHandler),
@@ -160,7 +197,10 @@ ROUTES = [
     ('/share', ShareHandler),
     ('/create', CreateHandler),
     ('/browse', BrowseHandler),
+    ('/theme/(\d+)', ThemeViewHandler),
+    ('/theme/(\d+)/(.*)', ThemeViewHandler),
     ('/api/get-themes', ApiGetThemesHandler),
+    ('/api/get-template', ApiGetTemplateHandler),
     ('/', HomeHandler),
 ]
 
