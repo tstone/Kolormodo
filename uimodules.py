@@ -17,6 +17,32 @@ class BaseUIModule(tornado.web.UIModule):
         return self.handler.get_login_url()
 
 
+class numOrZero(BaseUIModule):
+    def render(self, value):
+        if not value:
+            return 0
+        else:
+            return value
+
+
+class safenum(BaseUIModule):
+    def render(self, value):
+        if not value:
+            return 0
+        else:
+            try:
+                value = int(value)
+            except:
+                return 0
+            if value > 100000:
+                return 'tons'
+            elif value > 1000:
+                value = str(value)
+                return '%sk' % value[:-3]
+            else:
+                return value
+
+
 class UserHeader(BaseUIModule):
     def render(self):
         if self.current_user:

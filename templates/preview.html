@@ -7,7 +7,7 @@
 {% end %}
 
 {% block above_body %}
-    <nav class="schemes">
+    <nav class="schemes preview">
         <div class="lang">
             <select>
                 <option value="" selected="selected">Choose a preview language</option>
@@ -17,23 +17,19 @@
                 <option value="ruby">Ruby</option>
             </select>
         </div>
+        <a href="{{ back }}" class="widebutton back" title="Return to Schemes Listing page">&lt; Back to Schemes</a>
     </nav>
 {% end %}
 
 {% block body %}
     <div class="preview">
-        <a class="download" href="{{ scheme.download_url }}" title="download {{ escape(scheme.title) }} color scheme">download<span>({{ len(scheme.raw) / 1000 }}k)</span></a>
+        <a class="download widebutton" href="{{ scheme.download_url }}" title="download {{ escape(scheme.title) }} color scheme">download<span>({{ len(scheme.raw) / 1000 }}k)</span></a>
         <div class="header">
             <h1>{{ escape(scheme.title) }}<span class="by">by</span><a href="/user/???">{{ escape(scheme.author.nickname()) }}</a>
         </div>
         <div class="scheme-row">
             <div class="buttons-col">
-
-                {% if scheme.votes %}
-                    <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">{{ scheme.votes }}</a>
-                {% else %}
-                    <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">0</a>
-                {% end %}
+                <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">{{ modules.safenum(scheme.votes) }}</a>
 
                 {% if user_favorite %}
                     <a class="button favorite isfav" rel="nofollow" href="{{ scheme.favorite_url }}/undo"></a>

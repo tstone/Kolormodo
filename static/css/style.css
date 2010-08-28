@@ -65,10 +65,10 @@ a { color: #566371; text-decoration: underline; }
 select { font-family: Segoe UI, Trebuchet MS, Trebuchet, Helvetica, Arial, sans-serif; color: #566371; padding: 1px; }
 
 header { height: 150px; padding-top: 5px; z-index: 2; position: absolute; top: 0; left: 20px; }
-header nav { background: transparent url("/static/img/header-bg.png") no-repeat left center; width: 850px; height: 50px; text-shadow: #fff 1px 1px 0; }
+header nav { background: transparent url("/static/img/front-page-sprite.png") no-repeat -64px 0px; width: 850px; height: 45px; text-shadow: #fff 1px 1px 0; }
 header nav > div { float: left; margin-top: 16px; margin-right: 12px; }
 header nav > div:last-child { margin-right: 0; }
-header nav .gravatar { background: transparent url("/static/img/gravatar-bg.png") no-repeat top left; width: 56px; height: 58px; padding-top: 3px; margin-left: 15px; margin-top: 0; text-align: center; }
+header nav .gravatar { background: transparent url("/static/img/front-page-sprite.png") no-repeat -3px -7px; width: 56px; height: 58px; padding-top: 3px; margin-left: 15px; margin-top: 0; text-align: center; }
 header nav .login { margin-left: 20px; }
 header nav .login > img { margin: 0 8px; vertical-align: middle; }
 header nav .user a { text-decoration: none; font-weight: bold; }
@@ -97,8 +97,8 @@ nav.schemes { position: relative; height: 33px; position: absolute; top: 0; left
 nav.schemes h1 { font-weight: bold; font-size: 13px; width: 30px; float: left; margin-top: 7px; margin-bottom: 1px; }
 nav.schemes ul { list-style-type: none; margin-left: 10px; float: left; }
 nav.schemes li { list-style-type: none; display: block; float: left; margin-right: 10px; }
-nav.schemes li > a { text-decoration: none; text-shadow: #fff 1px 1px 0; float: left; display: block; width: 35px; height: 31px; padding: 8px 7px 0 15px; background: transparent url("/static/img/scheme-tabs-bg.png") no-repeat top left; position: relative; }
-nav.schemes li > a > em:last-child { display: block; height: 100%; width: 8px; background: transparent url("/static/img/scheme-tabs-bg.png") no-repeat top right; position: absolute; top: 0; right: 0; margin-right: -8px; }
+nav.schemes li > a { text-decoration: none; text-shadow: #fff 1px 1px 0; float: left; display: block; width: 35px; height: 31px; padding: 8px 7px 0 15px; background: transparent url("/static/img/front-page-sprite.png") no-repeat -459px -47px; position: relative; }
+nav.schemes li > a > em:last-child { display: block; height: 100%; width: 8px; background: transparent url("/static/img/front-page-sprite.png") no-repeat -630px -47px; position: absolute; top: 0; right: 0; margin-right: -8px; }
 nav.schemes li.active { margin-right: 5px; }
 nav.schemes li.active > a { background: #848E98 url("/static/img/scheme-tab-active.png") repeat-x bottom; text-shadow: 0 0 0; color: white; padding-right: 15px; text-align: center; font-weight: bold; }
 nav.schemes li.active > a > em:last-child { display: none; }
@@ -109,12 +109,25 @@ hgroup.schemes { position: relative; }
 hgroup.schemes > div { float: left; position: relative; padding: 5px; margin-left: 40px; }
 hgroup.schemes > div.hover h1 { color: #C34D58; }
 hgroup.schemes h1 { font-size: 24px; margin-bottom: 0px; font-weight: normal; letter-spacing: -1px; text-shadow: #ddd 2px 2px 0; }
-hgroup.schemes a.button { background: transparent url("/static/img/scheme-buttons.png") no-repeat 0 0; text-shadow: #fff 1px 1px 0; position: absolute; right: 0; margin-right: -5px; padding: 6px 10px; font-size: 11px; text-align: center; display: block; height: 25px; width: 50px; z-index: 4; text-decoration: none; }
-hgroup.schemes a.button:hover { background-position: -68px 0; }
+hgroup.schemes a.button { position: absolute; right: 0; margin-right: -5px; z-index: 4; }
 hgroup.schemes a.preview { top: 50px; margin-top: 0; }
+hgroup.schemes a.preview > em { float: left; margin-top: 2px; margin-right: 1px; }
 hgroup.schemes a.download { top: 80px; }
 hgroup.schemes a.clickable { position: absolute; top: 0; left: 0; z-index: 1; height: 100%; width: 100%; }
+.schemes div.details { position: absolute; top: 18px; right: 19px; z-index: 5; }
+.schemes div.details > span { display: block; float: right; padding-left: 9px; text-align: right; cursor: pointer; }
+.schemes div.details > span > em { display: block; background: transparent url("/static/img/front-page-sprite.png") no-repeat; margin-top: 5px; margin-left: 2px; float: right; }
+.schemes div.details .views > em { background-position: -406px -52px; height: 8px; width: 8px; }
+.schemes div.details .downloads > em { background-position: -417px -62px; height: 8px; width: 9px; margin-top: 6px; }
+.schemes div.details .votes > em { background-position: -417px -52px; height: 8px; width: 9px; margin-top: 6px; }
+.schemes div.details .favorites > em { background-position: -428px -52px; height: 10px; width: 9px; margin-top: 4px; }
 .schemes article { height: 168px; width: 321px; background: transparent url("/static/img/theme-bg.png") no-repeat top left; position: relative; padding: 4px 5px; }
+
+.preview-icon { display: block; height: 11px; width: 11px; background: transparent url("/static/img/front-page-sprite.png") no-repeat -440px -52px; }
+a.button { background: transparent url("/static/img/front-page-sprite.png") no-repeat -125px -48px; text-shadow: #fff 1px 1px 0; padding: 6px 10px; font-size: 11px; text-align: center; display: block; height: 25px; width: 50px; text-decoration: none; }
+a.button:hover { background-position: -194px -48px; }
+a.widebutton { display: block; width: 164px; height: 28px; background: transparent url("/static/img/preview-page-sprite.png") no-repeat 0 -73px; text-align: center; text-decoration: none; padding-top: 7px; font-weight: bold; text-shadow: #fff 1px 1px 0; font-size: 16px;  }
+a.widebutton:hover { background-position: -163px -73px; }
 
 div.preview { margin-top: 15px; }
 .preview h1 { font-size: 27px; color: #C34D58; text-shadow: #ddd 2px 2px 0; margin-left: 95px; margin-bottom: 2px; }
@@ -146,9 +159,9 @@ div.preview { margin-top: 15px; }
 .preview .social-media { margin-left: 95px; }
 .preview .social-media > div { float: left; margin-right: 7px; }
 .preview .social-media > div:last-child { margin-right: 0; }
-.preview a.download { display: block; position: absolute; top: 45px; right: 25px; width: 164px; height: 28px; background: transparent url("/static/img/preview-page-sprite.png") no-repeat 0 -73px; text-align: center; text-decoration: none; padding-top: 7px; font-weight: bold; font-size: 14px; text-shadow: #fff 1px 1px 0; font-size: 16px; }
-.preview a.download:hover { background-position: -163px -73px; }
+.preview a.download { display: block; position: absolute; top: 45px; right: 25px; }
 .preview a.download span { font-size: 12px; padding-left: 3px; }
+.preview a.back { margin-left: -14px; margin-top: -13px; }
 
 /*
  * Print Styles

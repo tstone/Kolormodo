@@ -3,7 +3,13 @@
 </style>
 <div class="scheme">
     <h1>{{ escape(scheme.title) }}</h1>
-    <article id="cs-{{ scheme.key().id() }}">
+    <div class="details" style="display: none;">
+        <span class="favorites" title="{{ modules.numOrZero(scheme.favorite_count) }} Favorites">{{ modules.safenum(scheme.favorite_count) }}<em></em></span>
+        <span class="votes" title="{{ modules.numOrZero(scheme.votes) }} Up Votes">{{ modules.safenum(scheme.votes) }}<em></em></span>
+        <span class="downloads" title="{{ modules.numOrZero(scheme.download_count) }} Downloads">{{ modules.safenum(scheme.download_count) }}<em></em></span>
+        <span class="views" title="{{ modules.numOrZero(scheme.view_count) }} Views">{{ modules.safenum(scheme.view_count) }}<em></em></span>
+    </div>
+    <article id="cs-{{ scheme.safe_id }}">
             <div class="ksf-common">
                 <div class="ksf-linenumbers">
                 <span>1.</span>
@@ -19,7 +25,7 @@
             {{ lang_template }}
         </div>
     </article>
-    <a class="button preview" title="Preview {{ escape(scheme.title) }}" href="{{ scheme.preview_url }}">Preview</a>
+    <a class="button preview" title="Preview {{ escape(scheme.title) }}" href="{{ scheme.preview_url }}"><em class="preview-icon"></em>Preview</a>
     <a class="button download" title="Download {{ escape(scheme.title) }}" href="{{ scheme.download_url }}">Download</a>
     <a class="clickable" href="{{ scheme.preview_url }}" title="Preview {{ escape(scheme.title) }} by {{ escape(scheme.author.nickname()) }}"></a>
 </div>

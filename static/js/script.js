@@ -27,6 +27,17 @@ var setActiveSortTab = function() {
     }
 }
 
+var detailsOnHover = function() {
+    $('.schemes div.scheme').hover(
+        function() {
+            $(this).find('div.details').stop(true, true).fadeIn(450);
+        },
+        function() {
+            $(this).find('div.details').stop(true, true).fadeOut(450);
+        }
+    );
+}
+
 var $langs = {};
 var $lang_changes = 0;
 var $langs_preloaded = false;

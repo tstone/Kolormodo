@@ -64,11 +64,11 @@ class HomeHandler(BaseHandler):
     def get(self):
         sort = self.get_argument('s', '').lower()
         if sort == 'views':
-            sort = 'view_count'
+            sort = '-view_count'
         elif sort == 'downloads':
-            sort = 'download_count'
+            sort = '-download_count'
         elif sort == 'votes':
-            sort = 'votes'
+            sort = '-votes'
         elif sort == 'newest':
             sort = '-published'
         else:
@@ -137,6 +137,12 @@ class PreviewHandler(SchemeHandler):
             'scheme': scheme,
             'lang_template': self.get_lang_template('python'),
         }
+
+        if 'Referer' in self.request.headers:
+            values['back'] = self.request.headers['Referer']
+        else:
+            values['back'] = '/'
+
         if self.current_user:
             values['user_favorite'] = self.data.is_favorite(scheme, self.current_user)
         else:
