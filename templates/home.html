@@ -1,31 +1,51 @@
 {% extends "_base.html" %}
-{% block title_override %}Kolormodo.com | Komodo Edit and Komodo IDE color schemes{% endblock %}
-{% block body_tag %}id="home"{% endblock %}
-{% block head %}
-<style type="text/css">
-    {% for theme in themes %}
-{{ theme.general_css }}
-    {% endfor %}
-</style>
-{% endblock %}
+{% block title_override %}Kolormodo.com | Komodo Edit and Komodo IDE color schemes{% end %}
+
+{% block above_body %}
+    <nav class="schemes">
+        <hgroup>
+            <h1>Sort:</h1>
+            <ul>
+                <li id="sort-views">
+                    <a href="/?s=views" title="Sort color schemes by # of views">Views<em></em></a>
+                </li>
+                <li id="sort-downloads">
+                    <a href="/?s=downloads" title="Sort color schemes by # of downloads" style="width:65px;">Downloads<em></em></a>
+                </li>
+                <li id="sort-votes">
+                    <a href="/?s=votes" title="Sort color schemes by # of votes">Votes<em></em></a>
+                </li>
+                <li id="sort-new">
+                    <a href="/?s=new" title="Sort color schemes by how recently they were created" style="width:43px;">Newest<em></em></a>
+                </li>
+            </ul>
+        </hgroup>
+        <div class="lang">
+            <select>
+                <option value="" selected="selected">Choose a preview language</option>
+                <option value="css">CSS</option>
+                <option value="perl">Perl</option>
+                <option value="python">Python</option>
+                <option value="ruby">Ruby</option>
+            </select>
+        </div>
+    </nav>
+{% end %}
 
 {% block body %}
-    <nav id="search">search schemes<em class="down-arrow"></em></nav>
-    <nav id="editor">scheme editor<em class="down-arrow"></em></nav>
-
-    <hgroup class="themes">
-        <span>Loading color themes.  Please wait...</span>
+    <hgroup class="schemes">
+        {% for scheme in schemes %}
+            {{ modules.SchemePreviewSmall(scheme) }}
+        {% end %}
     </hgroup>
-
-    <div id="arrow-left" class="nav-arrow"><a href="#Left" class="left"></a></div>
-    <div id="arrow-right" class="nav-arrow"><a href="#Right" class="right"></a></div>
-
-{% endblock %}
+{% end %}
 
 {% block script %}
     <script type="text/javascript">
         $(function() {
-            $('hgroup.themes').themeBrowser();
+            setActiveSortTab();
+            activatePreviewLanguage();
+            $('hgroup.schemes a.clickable').parentHoverClass('hover');
         });
     </script>
-{% endblock %}
+{% end %}

@@ -20,7 +20,6 @@ def administrator(method):
             return method(self, *args, **kwargs)
     return wrapper
 
-
 def authenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):

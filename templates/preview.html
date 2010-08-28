@@ -1,0 +1,107 @@
+{% extends "_base.html" %}
+{% block title_override %}Kolormodo.com | Komodo Edit and Komodo IDE color schemes{% end %}
+{% block head %}
+<style type="text/css">
+    {{ scheme.all_css() }}
+</style>
+{% end %}
+
+{% block above_body %}
+    <nav class="schemes">
+        <div class="lang">
+            <select>
+                <option value="" selected="selected">Choose a preview language</option>
+                <option value="css">CSS</option>
+                <option value="perl">Perl</option>
+                <option value="python">Python</option>
+                <option value="ruby">Ruby</option>
+            </select>
+        </div>
+    </nav>
+{% end %}
+
+{% block body %}
+    <div class="preview">
+        <a class="download" href="{{ scheme.download_url }}" title="download {{ escape(scheme.title) }} color scheme">download<span>({{ len(scheme.raw) / 1000 }}k)</span></a>
+        <div class="header">
+            <h1>{{ escape(scheme.title) }}<span class="by">by</span><a href="/user/???">{{ escape(scheme.author.nickname()) }}</a>
+        </div>
+        <div class="scheme-row">
+            <div class="buttons-col">
+                {% if scheme.votes %}
+                    <a class="vote" href="#TODO">{{ scheme.votes }}</a>
+                {% else %}
+                    <a class="vote" href="#TODO">0</a>
+                {% end %}
+                <a class="favorite" href="#TODO"></a>
+            </div>
+            <article id="cs-{{ scheme.safe_id }}">
+                <div class="ksf-common">
+                    {{ lang_template }}
+                </div>
+            </article>
+            <span class="shadow"></span>
+        </div>
+        <div class="details">
+            {% if scheme.description %}
+            <div class="desc">
+                <h2>From the Author</h2>
+                {{ escape(scheme.description) }}
+            </div>
+            {% end %}
+            <div class="langs">
+                <h2>Languages in Scheme</h2>
+                <ul>
+                    {% for lang in scheme.extra_langs %}
+                        <li>{{ lang }}</li>
+                    {% end %}
+                </ul>
+                <span style="clear:both; display:block; height:1px;"></span>
+            </div>
+            <div class="stats">
+                <h2>Stats</h2>
+                <table>
+                    <tr>
+                        <td class="val">{{ len(scheme.raw) / 1000 }} kb</td><td>file size</td>
+                    </tr>
+                    <tr>
+                        <td class="val">{{ scheme.view_count }}</td><td>views</td>
+                    </tr>
+                    <tr>
+                        <td class="val">{{ scheme.download_count }}</td><td>downloads</td>
+                    </tr>
+                    <tr>
+                        <td class="val">{{ scheme.favorite_count }}</td><td>favorites</td>
+                    </tr>
+                </table>
+            </div>
+            <span style="clear:both; display:block; height:1px;"></span>
+        </div>
+        <div class="social-media">
+            <div>
+                <a href="http://twitter.com/share" class="twitter-share-button" data-url="{{ scheme.preview_url }}" data-text="{{ escape(scheme.title) }} color scheme for #komodo" data-count="horizontal" data-via="kolormodo">Tweet</a> <!-- data-related="author's twitter:description" -->
+            </div>
+            <div>
+                <fb:like href="{{ scheme.preview_url }}"></fb:like>
+            </div>
+        </div>
+    </div>
+    <div id="fb-root"></div>
+{% end %}
+
+{% block script %}
+    <script type="text/javascript">
+        activatePreviewLanguage();
+    </script>
+    <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({appId: '148285178523496', status: true, cookie: true, xfbml: true});
+        };
+        (function() {
+            var e = document.createElement('script'); e.async = true;
+            e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
+            document.getElementById('fb-root').appendChild(e);
+        }());
+    </script>
+{% end %}

@@ -1,0 +1,14 @@
+<style type="text/css">
+    {{ scheme.general_css }}
+</style>
+<div class="scheme">
+    <h1>{{ escape(scheme.title) }}</h1>
+    <article id="cs-{{ scheme.key().id() }}">
+        <div class="ksf-common">
+            {{ lang_template }}
+        </div>
+    </article>
+    <a class="button preview" title="Preview {{ escape(scheme.title) }}" href="{{ scheme.preview_url }}">Preview</a>
+    <a class="button download" title="Download {{ escape(scheme.title) }}" href="{{ scheme.download_url }}">Download</a>
+    <a class="clickable" href="{{ scheme.preview_url }}" title="Preview {{ escape(scheme.title) }} by {{ escape(scheme.author.nickname()) }}"></a>
+</div>

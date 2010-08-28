@@ -8,4 +8,4 @@ handlers:
   static_dir: static
 
 - url: /.*
-  script: kolormodo.py
+  script: app.py

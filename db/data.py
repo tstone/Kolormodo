@@ -5,10 +5,6 @@ from db.models import *
 from lib.ksf import KSFProcessor, KSFColor
 import helpers
 
-def slugify(self, input):
-        return input.replace(' ', '-').lower()
-
-
 class DataLayer(object):
     """A singleton object for accessing the data layer"""
 
@@ -52,8 +48,8 @@ class DataLayer(object):
                     pass
             cs.put()
 
-    def get_latest_colorschemes(self, count, offset):
-        return ColorScheme.all().order('-published').fetch(count, offset)
+    def get_colorschemes(self, count, offset, sort):
+        return ColorScheme.all().order(sort).fetch(count, offset)
 
     def get_scheme(self, id):
         return ColorScheme.get_by_id(int(id))

@@ -1,0 +1,15 @@
+{% if user %}
+    <div class="gravatar">
+        <a href="http://www.gravatar.com" title="Set your profile image on Gravatar.com" target="_blank">
+            <img src="http://www.gravatar.com/avatar/{{ gravatar_hash }}.jpg?d=identicon&s=50&r=pg" />
+        </a>
+    </div>
+    <div class="user">
+        <a class="username" href="#">{{ user.nickname() }}</a>
+        <!-- <span class="notifications">(<a href="#">3 new up-votes</a>)</span> -->
+    </div>
+{% else %}
+    <div class="user login">
+        <a href="{{ login_url }}">Login</a><img src="/static/img/look.png" />Login to vote, set preferences, and share your own themes.
+    </div>
+{% end %}

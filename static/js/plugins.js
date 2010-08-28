@@ -1,10 +1,13 @@
 window.log = function(){
   // Only show log when in local development
-  if (window.location.href.indexOf('http://localhost') == 0) {
+  if (window.location.href.indexOf('http://local') == 0) {
     log.history = log.history || [];
     log.history.push(arguments);
     if(this.console){
       console.log( Array.prototype.slice.call(arguments) );
+    }
+    else{
+      alert(arguments);
     }
   }
 };
@@ -13,6 +16,14 @@ window.log = function(){
 $.fn.hoverClass = function(cssClass) {
   $(this).each(function() {
     $(this).hover( function() { $(this).addClass(cssClass); }, function() { $(this).removeClass(cssClass); } );
+  });
+  return this;
+};
+
+// jQuery Plugin for simple hover class swapping
+$.fn.parentHoverClass = function(cssClass) {
+  $(this).each(function() {
+    $(this).hover( function() { $(this).parent().addClass(cssClass); }, function() { $(this).parent().removeClass(cssClass); } );
   });
   return this;
 };

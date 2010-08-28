@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <!--[if IE]><![endif]-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>{% block title_override %}{% block title %}{% endblock %} | Kolormodo.com | Put a little kolor in your kdragon{% endblock %}</title>
+    <title>{% block title_override %}{% block title %}{% end %} | Kolormodo.com | Put a little kolor in your kdragon{% end %}</title>
     <meta name="description" content="Color schemes for Komodo edit and Komodo IDE">
     <meta name="author" content="Titus Stone">
     <meta name="tags" content="color scheme, color theme, komodo, komodo edit, komodo ide">
@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/static/css/style.css?v=1">
     <link rel="stylesheet" media="handheld" href="/static/css/handheld.css?v=1">
     <script src="/static/js/modernizr-1.5.min.js"></script>
-    {% block head %}{% endblock %}
+    {% block head %}{% end %}
 </head>
 <!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->
 <!--[if IE 7 ]>    <body class="ie7"> <![endif]-->
@@ -23,64 +23,55 @@
 <!--[if (gt IE 9)|!(IE)]><!--> <body> <!--<![endif]-->
 
     <header>
-        <img id="ajax-loading" src="/static/img/ajax-loader-balls.gif" style="display:none;" />
+        <nav>
+            {{ modules.UserHeader() }}
+            <div>
+                BETA: <strong>THIS SITE STILL UNDER DEVELOPMENT</strong> Feedback: <a href="mailto:webmaster@kolormodo.com">webmaster</a>
+            </div>
+            <a id="logo" href="/" title="Kolormodo :: Slay the kdragon with kolor!"></a>
+        </nav>
     </header>
 
+    <div id="colors"></div>
+
     <div id="main">
-        {% block body %}{% endblock %}
+        <div id="top-bar"></div>
+        <div id="main-body-top"></div>
+        {% block above_body %}{% end %}
+        <div id="main-body">
+            {% block body %}{% end %}
+            <span style="clear:both; height:1px; display:block;"></span>
+        </div>
     </div>
 
-    <hgroup class="ads">
-        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
-        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
-        <aside class="one empty"><a href="/advertise">Advertise Here.</a></aside>
-        <!-- <aside class="two empty"></aside> -->
-    </hgroup>
-
     <footer>
-        {% if user %}
-            <nav id="user-bar" title="manage your user settings &amp; profile" rel="/me">{{ user.nickname }}<em class="up-arrow"></em></nav>
-        {% else %}
-            <nav id="user-bar" title="manage your user settings &amp; profile" rel="{{ login_url }}">login</nav>
-        {% endif %}
-        <nav id="share" title="upload &amp; share your color schemes here">upload themes</nav>
-        <nav id="about" title="a little about kolormodo.com">about</nav>
+
     </footer>
-    <div id="fb-root"></div>
 
     <!-- This huge splatter of javascript files needs to be cleaned up... -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
     <script>!window.jQuery && document.write('<script src="/static/js/jquery-1.4.2.min.js"><\/script>')</script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
-    <script src="http://cdn.jquerytools.org/1.2.3/jquery.tools.min.js"></script>
-    <script src="/static/js/jquery.address-1.2.2.min.js"></script>
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script> -->
+    <!-- <script src="http://cdn.jquerytools.org/1.2.3/jquery.tools.min.js"></script> -->
+    <!-- <script src="/static/js/jquery.address-1.2.2.min.js"></script> -->
     <script src="/static/js/plugins.js?v=1"></script>
     <script src="/static/js/script.js?v=1"></script>
-    {% block script %}{% endblock %}
+    {% block script %}{% end %}
     <!--[if lt IE 7 ]>
       <script src="/static/js/dd_belatedpng.js?v=1"></script>
     <![endif]-->
+    {% if localhost %}
     <script src="/static/js/profiling/yahoo-profiling.min.js?v=1"></script>
     <script src="/static/js/profiling/config.js?v=1"></script>
+    {% end %}
+    {% if not localhost %}
     <script>
-        if (window.location.href.substring(0, 16) != 'http://localhost') {
-           var _gaq = [['_setAccount', 'UA-17994366-1'], ['_trackPageview']];
-           (function(d, t) {
-            var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
-            g.async = true; g.src = '//www.google-analytics.com/ga.js'; s.parentNode.insertBefore(g, s);
-           })(document, 'script');
-        }
+        var _gaq = [['_setAccount', 'UA-17994366-1'], ['_trackPageview']];
+        (function(d, t) {
+         var g = d.createElement(t), s = d.getElementsByTagName(t)[0];
+         g.async = true; g.src = '//www.google-analytics.com/ga.js'; s.parentNode.insertBefore(g, s);
+        })(document, 'script');
     </script>
-    <!-- <script>
-        window.fbAsyncInit = function() {
-          FB.init({appId: '148285178523496', status: true, cookie: true, xfbml: true});
-        };
-        (function() {
-          var e = document.createElement('script'); e.async = true;
-          e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
-          document.getElementById('fb-root').appendChild(e);
-        }());
-      </script> -->
-    <img src="/static/img/tooltip-bg.png" style="display:none" />
+    {% end %}
 </body>
 </html>

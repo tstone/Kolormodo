@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from google.appengine.ext import db
-from django.template.defaultfilters import slugify
 import helpers
 
 class ColorScheme(db.Expando):
@@ -17,6 +16,8 @@ class ColorScheme(db.Expando):
     general_css = db.TextProperty()
     download_count = db.IntegerProperty()
     view_count = db.IntegerProperty()
+    favorite_count = db.IntegerProperty()
+    votes = db.IntegerProperty()
 
     @property
     def safe_id(self):
@@ -24,7 +25,15 @@ class ColorScheme(db.Expando):
 
     @property
     def slug(self):
-        return slugify(self.title)
+        return helpers.property_safe_name(self.title)
+
+    @property
+    def download_url(self):
+        return '/download/%s/%s.ksf' % (self.key().id(), self.slug)
+
+    @property
+    def preview_url(self):
+        return '/preview/%s/%s' % (self.key().id(), self.slug)
 
     def all_css(self):
         css = self.general_css
@@ -38,16 +47,22 @@ class ColorScheme(db.Expando):
 
     def increment_views(self):
         # Google analytics?
-        if self.view_count:
-            self.view_count += 1
-        else:
+        try:
+            if self.view_count:
+                self.view_count += 1
+            else:
+                self.view_count = 1
+        except:
             self.view_count = 1
         self.save()
 
     def increment_downloads(self):
-        # Google analytics
-        if self.download_count:
-            self.download_count += 1
-        else:
+        # Google analytics?
+        try:
+            if self.download_count:
+                self.download_count += 1
+            else:
+                self.download_count = 1
+        except:
             self.download_count = 1
         self.save()
