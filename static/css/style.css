@@ -109,7 +109,7 @@ hgroup.schemes { position: relative; }
 hgroup.schemes > div { float: left; position: relative; padding: 5px; margin-left: 40px; }
 hgroup.schemes > div.hover h1 { color: #C34D58; }
 hgroup.schemes h1 { font-size: 24px; margin-bottom: 0px; font-weight: normal; letter-spacing: -1px; text-shadow: #ddd 2px 2px 0; }
-hgroup.schemes a.button { position: absolute; right: 0; margin-right: -5px; z-index: 4; }
+hgroup.schemes a.smallbutton { position: absolute; right: 0; margin-right: -5px; z-index: 4; }
 hgroup.schemes a.preview { top: 50px; margin-top: 0; }
 hgroup.schemes a.preview > em { float: left; margin-top: 2px; margin-right: 1px; }
 hgroup.schemes a.download { top: 80px; }
@@ -124,8 +124,8 @@ hgroup.schemes a.clickable { position: absolute; top: 0; left: 0; z-index: 1; he
 .schemes article { height: 168px; width: 321px; background: transparent url("/static/img/theme-bg.png") no-repeat top left; position: relative; padding: 4px 5px; }
 
 .preview-icon { display: block; height: 11px; width: 11px; background: transparent url("/static/img/front-page-sprite.png") no-repeat -440px -52px; }
-a.button { background: transparent url("/static/img/front-page-sprite.png") no-repeat -125px -48px; text-shadow: #fff 1px 1px 0; padding: 6px 10px; font-size: 11px; text-align: center; display: block; height: 25px; width: 50px; text-decoration: none; }
-a.button:hover { background-position: -194px -48px; }
+a.smallbutton { background: transparent url("/static/img/front-page-sprite.png") no-repeat -125px -48px; text-shadow: #fff 1px 1px 0; padding: 6px 10px; font-size: 11px; text-align: center; display: block; height: 25px; width: 50px; text-decoration: none; }
+a.smallbutton:hover { background-position: -194px -48px; }
 a.widebutton { display: block; width: 164px; height: 28px; background: transparent url("/static/img/preview-page-sprite.png") no-repeat 0 -73px; text-align: center; text-decoration: none; padding-top: 7px; font-weight: bold; text-shadow: #fff 1px 1px 0; font-size: 16px;  }
 a.widebutton:hover { background-position: -163px -73px; }
 
