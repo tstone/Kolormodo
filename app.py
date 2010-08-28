@@ -31,7 +31,9 @@ class BaseHandler(tornado.web.RequestHandler):
         values = {
             'users': users,
             'user': self.current_user,
-            'localhost': (self.request.host == 'localhost')
+            'localhost': (self.request.host == 'localhost'),
+            'url': self.request.uri,
+            'querystring': self.request.arguments,
         }
         return tornado.web.RequestHandler.render_string(self, template_name, **dict(values,**kwargs))
 
@@ -45,7 +47,7 @@ class BaseHandler(tornado.web.RequestHandler):
         ]
         lang = lang.lower()
         if lang in authorized_langs:
-            return os.path.join(os.path.dirname(__file__), "templates/lang-snippets/", '%s.html' % lang)
+            return os.path.join(os.path.dirname(__file__), "lang-snippets/", '%s.html' % lang)
         else:
             return ''
 
@@ -62,7 +64,10 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class HomeHandler(BaseHandler):
     def get(self):
+        values = { }
+
         sort = self.get_argument('s', '').lower()
+        values['sort'] = sort
         if sort == 'views':
             sort = '-view_count'
         elif sort == 'downloads':
@@ -74,8 +79,29 @@ class HomeHandler(BaseHandler):
         else:
             sort = '-published'
 
-        schemes = self.data.get_colorschemes(12, 0, sort)
-        self.render('home.html', schemes=schemes)
+        page = 0
+        try:
+            page = int(self.get_argument('p', '1')) - 1
+        except:
+            pass
+
+        per_page = 10
+        offset = page * per_page
+        schemes,pagination = self.data.get_colorschemes(per_page, offset, sort)
+
+        values['schemes'] = schemes
+        values['pagination'] = pagination
+
+        lang = self.get_argument('lang', None)
+        if not lang:
+            ud = self.data.get_user_details(self.current_user)
+            if ud.preferred_lang:
+                lang = ud.preferred_lang
+            else:
+                lang = 'python'
+        values['lang'] = lang
+
+        self.render('home.html', **values)
 
 
 class SchemeHandler(BaseHandler):
@@ -93,6 +119,7 @@ class SchemeHandler(BaseHandler):
         """Override to implement"""
         pass
 
+
 class AuthSchemeHandler(BaseHandler):
     @authenticated
     def get(self, *args):
@@ -109,11 +136,20 @@ class SchemeActionHandler(AuthSchemeHandler):
     def action(self, *args):
         """Override to implement"""
         pass
-
     def get_with_scheme(self, *args):
-        cont = self.action(*args)
+        if self.action(*args):
+            if 'X-Requested-With' in self.request.headers and self.request.headers['X-Requested-With'] =='XMLHttpRequest':
+                self.write('')
+            else:
+                if 'Referer' in self.request.headers:
+                    self.redirect(self.request.headers['Referer'])
+                else:
+                    self.redirect('/')
 
-        if cont:
+class AuthActionHandler(BaseHandler):
+    @authenticated
+    def get(self, *args):
+        if self.action(*args):
             if 'X-Requested-With' in self.request.headers and self.request.headers['X-Requested-With'] =='XMLHttpRequest':
                 self.write('')
             else:
@@ -135,8 +171,17 @@ class PreviewHandler(SchemeHandler):
         scheme.increment_views()
         values = {
             'scheme': scheme,
-            'lang_template': self.get_lang_template('python'),
         }
+
+        values['lang'] = self.get_argument('lang', None)
+        if not values['lang']:
+            ud = self.data.get_user_details(self.current_user)
+            if ud.preferred_lang:
+                values['lang'] = ud.preferred_lang
+            else:
+                values['lang'] = 'python'
+
+        values['lang_template'] = self.get_lang_template(values['lang'])
 
         if 'Referer' in self.request.headers:
             values['back'] = self.request.headers['Referer']
@@ -173,6 +218,14 @@ class VoteHandler(SchemeActionHandler):
         return True
 
 
+class UserSetLangHandler(AuthActionHandler):
+    @authenticated
+    def action(self):
+        self.data.set_user_lang(self.current_user, self.get_argument('lang', 'python'))
+        return True
+
+
+
 class ApiGetTemplateHandler(BaseHandler):
     def get(self):
         template = self.get_lang_template(self.get_argument('lang', ''))
@@ -197,6 +250,7 @@ if __name__ == "__main__":
         (r"/scheme/download/(\d+)/([^/]+).ksf", DownloadHandler),
         (r"/scheme/favorite/(\d+)/([^/]+)", FavoriteHandler),
         (r"/scheme/vote/(\d+)", VoteHandler),
+        (r"/user/set/lang", UserSetLangHandler),
         (r"/api/get-template", ApiGetTemplateHandler),
     ]
 

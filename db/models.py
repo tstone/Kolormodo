@@ -98,3 +98,7 @@ class SchemeVotes(db.Model):
     user = db.UserProperty()
     scheme = db.ReferenceProperty(ColorScheme)
     date = db.DateTimeProperty(auto_now_add=True)
+
+class UserDetails(db.Model):
+    user = db.UserProperty()
+    preferred_lang = db.StringProperty()

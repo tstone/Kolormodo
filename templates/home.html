@@ -6,21 +6,22 @@
         <hgroup>
             <h1>Sort:</h1>
             <ul>
-                <li id="sort-views">
-                    <a href="/?s=views" title="Sort color schemes by # of views">Views<em></em></a>
+                <li id="sort-views" {% if sort == 'views' %}class="active"{% end %}>
+                    <a href="{{ modules.set_sort_url(querystring, 'views') }}" title="Sort color schemes by # of views">Views<em></em></a>
                 </li>
-                <li id="sort-downloads">
-                    <a href="/?s=downloads" title="Sort color schemes by # of downloads" style="width:65px;">Downloads<em></em></a>
+                <li id="sort-downloads" {% if sort == 'downloads' %}class="active"{% end %}>
+                    <a href="{{ modules.set_sort_url(querystring, 'downloads') }}" title="Sort color schemes by # of downloads" style="width:65px;">Downloads<em></em></a>
                 </li>
-                <li id="sort-votes">
-                    <a href="/?s=votes" title="Sort color schemes by # of votes">Votes<em></em></a>
+                <li id="sort-votes" {% if sort == 'votes' %}class="active"{% end %}>
+                    <a href="{{ modules.set_sort_url(querystring, 'votes') }}" title="Sort color schemes by # of votes">Votes<em></em></a>
                 </li>
-                <li id="sort-new">
-                    <a href="/?s=new" title="Sort color schemes by how recently they were created" style="width:43px;">Newest<em></em></a>
+                <li id="sort-new" {% if sort == 'new' %}class="active"{% end %}>
+                    <a href="{{ modules.set_sort_url(querystring, 'new') }}" title="Sort color schemes by how recently they were created" style="width:43px;">Newest<em></em></a>
                 </li>
             </ul>
         </hgroup>
         <div class="lang">
+            <a class="smallbutton default" href="#" title="Make this language your default preview language" style="display:none;">Default</a>
             <select>
                 <option value="" selected="selected">Choose a preview language</option>
                 <option value="css">CSS</option>
@@ -35,15 +36,18 @@
 {% block body %}
     <hgroup class="schemes">
         {% for scheme in schemes %}
-            {{ modules.SchemePreviewSmall(scheme) }}
+            {{ modules.SchemePreviewSmall(scheme, lang) }}
         {% end %}
     </hgroup>
+
+    {{ modules.PaginationControls(pagination) }}
+
 {% end %}
 
 {% block script %}
     <script type="text/javascript">
         $(function() {
-            setActiveSortTab();
+            storeInTemplateLang($('.schemes article .ksf-common').get(0), '{{ lang }}');
             activatePreviewLanguage();
             detailsOnHover();
             $('hgroup.schemes a.clickable').parentHoverClass('hover');

@@ -1,30 +1,20 @@
 
-function getParameterByName(name)
+function getParameterByName(name, url)
 {
+  url = url || window.location.href;
   name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
   var regexS = "[\\?&]"+name+"=([^&#]*)";
-  var regex = new RegExp( regexS );
-  var results = regex.exec( window.location.href );
-  if( results == null )
+  var regex = new RegExp(regexS);
+  var results = regex.exec(url);
+  if(results == null)
     return "";
   else
     return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
 function removeParameterFromUrl(name, url) {
-    var val = getParameterByName(name);
-    return url.replace(name + '=' + val, '');
-}
-
-var setActiveSortTab = function() {
-    // Determine sort
-    var m = ((/\?[^&]*s=([^&]+|^)/).exec(window.location.href) || ['',''])[1]
-    if (m.length > 0) {
-        $('#sort-' + m).addClass('active');
-    }
-    else {
-        $('#sort-new').addClass('active');
-    }
+    var val = getParameterByName(name, url);
+    return url.replace(name + '=' + val, '').replace('&&', '');
 }
 
 var detailsOnHover = function() {
@@ -45,13 +35,12 @@ var $line_nums = '<div class="ksf-linenumbers"><span>1.</span><span>2.</span><sp
 
 var setLangTemplate = function(lang, html) {
     $('article .ksf-common').each(function() {
-        $(this).html(html);
+        $(this).attr('class', 'ksf-common ' + lang).html(html);
     });
-    // TODO: Update pagination querystrings
     // Update links (if present)
     $('nav.schemes ul li a, .pagination a').each(function() {
         var url = $(this).attr('href');
-        url = removeParameterFromUrl('lang', url);
+        url = removeParameterFromUrl('lang', url).replace('&&', '');
         $(this).attr('href', url + '&lang=' + lang);
     });
 }
@@ -74,6 +63,20 @@ var fetchLangTemplate = function(lang, callback) {
             }
         }
     });
+}
+
+var storeInTemplateLang = function(elem, lang) {
+    elem = $($(elem).clone())
+    elem.find('.ksf-linenumbers').remove();
+    var html = $line_nums + elem.html();
+    if (Modernizr.localstorage) {
+        log('Storing ' + lang);
+        localStorage.setItem(lang + '_template', html);
+        localStorage.setItem(lang + '_template_timestamp', (new Date()).getTime());
+    }
+    else {
+        $langs[lang] = html;
+    }
 }
 
 var checkLangLocalstorage = function(lang) {
@@ -110,14 +113,43 @@ var checkLangLocalstorage = function(lang) {
 }
 
 var activatePreviewLanguage = function() {
+    var select = $('#main .lang select');
 
-    $('#main .lang select').change(function() {
-        var select = $(this);
+    // Rectify querystring with select val
+    var lang = getParameterByName('lang') || "";
+    if (lang.length > 0) {
+        $('#main .lang select').val(lang);
+    }
+
+    var defaultBtn = $('#main .lang .default');
+    defaultBtn.click(function() {
+        $.ajax({
+            url: '/user/set/lang',
+            data: { lang: select.val() },
+            type: 'GET',
+            success: function() {
+                defaultBtn.text('Lang Set');
+                setTimeout(function() {
+                    defaultBtn.text('Default');
+                }, 5000);
+            },
+            error: function() {
+                alert('A server error prevented your default language from being set.  Try again later.');
+            }
+        });
+        return false;
+    });
+
+    select.change(function() {
         var val = select.val() || "";
         $lang_changes += 1;
 
         // Check if the template is already in cache
         if (val.length > 0) {
+            if (defaultBtn.css('display') == 'none') {
+                defaultBtn.fadeIn(500);
+            }
+
             if (($langs[val] || "").length > 0) {
                 setLangTemplate(val, $langs[val]);
                 return;
@@ -132,6 +164,12 @@ var activatePreviewLanguage = function() {
                 setLangTemplate(val, html);
             });
         }
+        else {
+            if (defaultBtn.css('display') != 'none') {
+                defaultBtn.fadeOut(500);
+            }
+        }
+
     });
 }
 

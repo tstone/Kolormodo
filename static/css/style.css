@@ -102,6 +102,7 @@ nav.schemes li > a > em:last-child { display: block; height: 100%; width: 8px; b
 nav.schemes li.active { margin-right: 5px; }
 nav.schemes li.active > a { background: #848E98 url("/static/img/scheme-tab-active.png") repeat-x bottom; text-shadow: 0 0 0; color: white; padding-right: 15px; text-align: center; font-weight: bold; }
 nav.schemes li.active > a > em:last-child { display: none; }
+nav.schemes .default { position: absolute; top: 0; right: 193px; margin-top: -3px; }
 #main .lang { text-align: right; width: 350px; position: absolute; top: 0; left: 473px; }
 #main .lang select { width: 190px; border: 0; }
 
@@ -124,7 +125,7 @@ hgroup.schemes a.clickable { position: absolute; top: 0; left: 0; z-index: 1; he
 .schemes article { height: 168px; width: 321px; background: transparent url("/static/img/theme-bg.png") no-repeat top left; position: relative; padding: 4px 5px; }
 
 .preview-icon { display: block; height: 11px; width: 11px; background: transparent url("/static/img/front-page-sprite.png") no-repeat -440px -52px; }
-a.smallbutton { background: transparent url("/static/img/front-page-sprite.png") no-repeat -125px -48px; text-shadow: #fff 1px 1px 0; padding: 6px 10px; font-size: 11px; text-align: center; display: block; height: 25px; width: 50px; text-decoration: none; }
+a.smallbutton { background: transparent url("/static/img/front-page-sprite.png") no-repeat -125px -48px; text-shadow: #fff 1px 1px 0; padding: 6px 10px; font-size: 11px; text-align: center; display: block; height: 13px; width: 50px; text-decoration: none; }
 a.smallbutton:hover { background-position: -194px -48px; }
 a.widebutton { display: block; width: 164px; height: 28px; background: transparent url("/static/img/preview-page-sprite.png") no-repeat 0 -73px; text-align: center; text-decoration: none; padding-top: 7px; font-weight: bold; text-shadow: #fff 1px 1px 0; font-size: 16px;  }
 a.widebutton:hover { background-position: -163px -73px; }
@@ -162,6 +163,20 @@ div.preview { margin-top: 15px; }
 .preview a.download { display: block; position: absolute; top: 45px; right: 25px; }
 .preview a.download span { font-size: 12px; padding-left: 3px; }
 .preview a.back { margin-left: -14px; margin-top: -13px; }
+
+nav.pagination { clear: both; margin-top: 25px; text-align: right; margin-right: 70px; }
+nav.pagination .nav { float: right; text-decoration: none; font-weight: bold; font-size: 14px; text-shadow: #ddd 2px 2px 0; }
+nav.pagination .nav > em { display: block; width: 8px; height: 9px; margin-top: 5px; background: transparent url("/static/img/front-page-sprite.png") no-repeat; }
+nav.pagination .next { margin-left: 8px; }
+nav.pagination .next > em { float: right; margin-left: 6px; background-position: -659px -52px; }
+nav.pagination .prev { margin-right: 8px; }
+nav.pagination .prev > em { float: left; margin-right: 6px; background-position: -647px -52px; }
+nav.pagination li { float: right; position: relative; display: block; height: 14px; width: 14px; margin-top: 2px; margin-right: 5px; background: transparent url("/static/img/front-page-sprite.png") no-repeat -669px -52px; }
+nav.pagination li:first-child { margin-right: 0; }
+nav.pagination li.current { background-position: -685px -52px; }
+nav.pagination li.hover { background-position: -701px -52px; }
+nav.pagination li > a { display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; }
+
 
 /*
  * Print Styles

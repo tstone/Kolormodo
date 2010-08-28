@@ -4,9 +4,24 @@ from google.appengine.ext import db
 from db.models import *
 from lib.ksf import KSFProcessor, KSFColor
 import helpers
+import logging
 
 class DataLayer(object):
     """A singleton object for accessing the data layer"""
+
+    def paginate(self, data_count, count, offset):
+        # Limit max maginated results returned:
+        p = {}
+        p['total'] = int(data_count)
+        p['page_count'] = (p['total'] / count) + 1
+        p['current_page'] = (p['total'] - (p['total'] - offset)) / count
+        p['prev_page'] = p['current_page'] - 1
+
+        p['next_page'] = p['current_page'] + 1
+        if p['next_page'] > (p['page_count'] - 1):
+            p['next_page'] = 0
+        logging.info(p)
+        return p
 
     def new_colorscheme(self, filename=None, data=None, user=None):
         """Create a new ColorScheme record based on KSF data"""
@@ -49,7 +64,10 @@ class DataLayer(object):
             cs.put()
 
     def get_colorschemes(self, count, offset, sort):
-        return ColorScheme.all().order(sort).fetch(count, offset)
+        schemes = ColorScheme.all().order(sort).fetch(count, offset)
+        total = ColorScheme.all().order(sort).count(200)
+        pagination = self.paginate(total, count, offset)
+        return (schemes, pagination)
 
     def get_scheme(self, id):
         return ColorScheme.get_by_id(int(id))
@@ -80,3 +98,14 @@ class DataLayer(object):
             scheme.increment_votes()
             return True
 
+    def get_user_details(self, user):
+        ud = UserDetails.all().filter('user = ', user).get()
+        if not ud:
+            ud = UserDetails(user=user, preferred_lang='python')    # Everybody loves Python!
+            ud.save()
+        return ud
+
+    def set_user_lang(self, user, lang):
+        ud = self.get_user_details(user)
+        ud.preferred_lang = lang
+        ud.save()

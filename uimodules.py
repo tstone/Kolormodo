@@ -4,6 +4,7 @@ import os.path
 from tornado.escape import xhtml_escape
 import tornado.web
 import logging
+import urlparse
 
 class BaseUIModule(tornado.web.UIModule):
     def __init__(self, handler):
@@ -42,6 +43,36 @@ class safenum(BaseUIModule):
             else:
                 return value
 
+class set_sort_url(BaseUIModule):
+    def render(self, querystring, value):
+        url = '?'
+        for q in querystring:
+            if not q == 's' and not q == 'p':
+                for val in querystring[q]:
+                    url += '%s=%s&' % (q, val)
+
+        querystring['s'] = [value,]
+
+        if len(url) > 1:
+            return '%s&%s=%s' % (url[:-1], 's', value)
+        else:
+            return '?%s=%s' % ('s', value)
+
+class querystring_replace(BaseUIModule):
+    def render(self, querystring, name, value):
+        url = '?'
+        for q in querystring:
+            if not q == name:
+                for val in querystring[q]:
+                    url += '%s=%s&' % (q, val)
+
+        querystring[name] = [value,]
+
+        if len(url) > 1:
+            return '%s&%s=%s' % (url[:-1], name, value)
+        else:
+            return '?%s=%s' % (name, value)
+
 
 class UserHeader(BaseUIModule):
     def render(self):
@@ -52,6 +83,10 @@ class UserHeader(BaseUIModule):
 
 
 class SchemePreviewSmall(BaseUIModule):
-    def render(self, scheme):
-        template = self.handler.get_lang_template('python')
-        return self.render_string('modules/scheme-preview-small.html', scheme=scheme, lang_template=template)
+    def render(self, scheme, lang='python'):
+        template = self.handler.get_lang_template(lang)
+        return self.render_string('modules/scheme-preview-small.html', scheme=scheme, lang_template=template, lang=lang)
+
+class PaginationControls(BaseUIModule):
+    def render(self, pagination):
+        return self.render_string('modules/pagination-controls.html', p=pagination)

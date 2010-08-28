@@ -43,7 +43,7 @@
 
             </div>
             <article id="cs-{{ scheme.safe_id }}">
-                <div class="ksf-common">
+                <div class="ksf-common {{ lang }}">
                     <div class="ksf-linenumbers">
                         <span>1.</span>
                         <span>2.</span>
@@ -76,8 +76,8 @@
             <div class="langs">
                 <h2>Languages in Scheme</h2>
                 <ul>
-                    {% for lang in scheme.extra_langs %}
-                        <li>{{ escape(lang) }}</li>
+                    {% for extralang in scheme.extra_langs %}
+                        <li>{{ escape(extralang) }}</li>
                     {% end %}
                 </ul>
                 <span style="clear:both; display:block; height:1px;"></span>
@@ -115,7 +115,9 @@
 
 {% block script %}
     <script type="text/javascript">
+        storeInTemplateLang($('.schemes article .ksf-common').get(0), '{{ lang }}');
         activatePreviewLanguage();
+
         var favLock = false;
         var voteLock = false;
 

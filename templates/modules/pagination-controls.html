@@ -1,0 +1,23 @@
+<nav class="pagination">
+
+    {% if p['next_page'] %}
+        <a class="nav next" href="{{ modules.querystring_replace(querystring, 'p', p['next_page'] + 1) }}" title="Next Page (Page {{ p['next_page'] + 1 }})">Next<em></em></a>
+    {% end %}
+
+    {% if p['page_count'] > 1 %}
+    <ul>
+        {% for page in range(p['page_count'], 0, -1) %}
+            {% if page - 1 == p['current_page'] %}
+                <li class="current" title="Current Page (Page {{ page }})"></li>
+            {% else %}
+                <li><a title="Page {{ page }}" class="page" href="{{ modules.querystring_replace(querystring, 'p', page) }}"></li>
+            {% end %}
+        {% end %}
+    </ul>
+    {% end %}
+
+    {% if p['prev_page'] > -1 %}
+        <a class="nav prev" href="{{ modules.querystring_replace(querystring, 'p', p['prev_page'] + 1) }}" title="Previous Page (Page {{ p['prev_page'] + 1 }})">Previous<em></em></a>
+    {% end %}
+
+</nav>
