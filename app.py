@@ -10,6 +10,7 @@ import uimodules
 import socket
 
 from google.appengine.api import users
+from decorators import authenticated, administrator
 from db.data import DataLayer
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -76,25 +77,94 @@ class HomeHandler(BaseHandler):
         schemes = self.data.get_colorschemes(12, 0, sort)
         self.render('home.html', schemes=schemes)
 
-class DownloadHandler(BaseHandler):
-    def get(self, scheme_id, slug=None):
+
+class SchemeHandler(BaseHandler):
+    def get(self, *args):
+        scheme_id = args[0]
         scheme = self.data.get_scheme(scheme_id)
         if scheme:
-            scheme.increment_downloads()
-            self.set_header('Content-Type', 'application/ksf')
-            self.write(scheme.raw)
+            newargs = list(args)
+            newargs[0] = scheme
+            self.get_with_scheme(*newargs)
         else:
             raise tornado.web.HTTPError(404)
 
-class PreviewHandler(BaseHandler):
-    def get(self, scheme_id, slug=None):
+    def get_with_scheme(self, scheme):
+        """Override to implement"""
+        pass
+
+class AuthSchemeHandler(BaseHandler):
+    @authenticated
+    def get(self, *args):
+        scheme_id = args[0]
         scheme = self.data.get_scheme(scheme_id)
         if scheme:
-            scheme.increment_views()
-            template = self.get_lang_template('python')
-            return self.render('preview.html', scheme=scheme, lang_template=template)
+            newargs = list(args)
+            newargs[0] = scheme
+            self.get_with_scheme(*newargs)
         else:
             raise tornado.web.HTTPError(404)
+
+class SchemeActionHandler(AuthSchemeHandler):
+    def action(self, *args):
+        """Override to implement"""
+        pass
+
+    def get_with_scheme(self, *args):
+        cont = self.action(*args)
+
+        if cont:
+            if 'X-Requested-With' in self.request.headers and self.request.headers['X-Requested-With'] =='XMLHttpRequest':
+                self.write('')
+            else:
+                if 'Referer' in self.request.headers:
+                    self.redirect(self.request.headers['Referer'])
+                else:
+                    self.redirect('/')
+
+
+class DownloadHandler(SchemeHandler):
+    def get_with_scheme(self, scheme, slug=None):
+        scheme.increment_downloads()
+        self.set_header('Content-Type', 'application/ksf')
+        self.write(scheme.raw)
+
+
+class PreviewHandler(SchemeHandler):
+    def get_with_scheme(self, scheme, slug=None):
+        scheme.increment_views()
+        values = {
+            'scheme': scheme,
+            'lang_template': self.get_lang_template('python'),
+        }
+        if self.current_user:
+            values['user_favorite'] = self.data.is_favorite(scheme, self.current_user)
+        else:
+            values['user_favorite'] = None
+            values['login_url'] = self.get_login_url()
+
+        return self.render('preview.html', **values)
+
+
+class FavoriteHandler(SchemeActionHandler):
+    def action(self, scheme, action):
+        if action == 'add':
+            self.data.make_favorite(scheme, self.current_user)
+        elif action == 'undo':
+            self.data.undo_favorite(scheme, self.current_user)
+        else:
+            # Not Implemented
+            raise tornado.web.HTTPError(405)
+        return True
+
+
+class VoteHandler(SchemeActionHandler):
+    def action(self, scheme):
+        voted = self.data.vote_for_scheme(scheme, self.current_user)
+        if not voted:
+            raise tornado.web.HTTPError(403)
+            return False
+        return True
 
 
 class ApiGetTemplateHandler(BaseHandler):
@@ -115,10 +185,12 @@ if __name__ == "__main__":
     routes = [
         #(r"/entry/([^/]+)", EntryHandler),
         (r"/", HomeHandler),
-        (r"/preview/(\d+)", PreviewHandler),
-        (r"/preview/(\d+)/([^/]+)", PreviewHandler),
-        (r"/download/(\d+)", DownloadHandler),
-        (r"/download/(\d+)/([^/]+).ksf", DownloadHandler),
+        (r"/scheme/preview/(\d+)", PreviewHandler),
+        (r"/scheme/preview/(\d+)/([^/]+)", PreviewHandler),
+        (r"/scheme/download/(\d+)", DownloadHandler),
+        (r"/scheme/download/(\d+)/([^/]+).ksf", DownloadHandler),
+        (r"/scheme/favorite/(\d+)/([^/]+)", FavoriteHandler),
+        (r"/scheme/vote/(\d+)", VoteHandler),
         (r"/api/get-template", ApiGetTemplateHandler),
     ]
 

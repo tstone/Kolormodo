@@ -2,7 +2,7 @@
 {% block title_override %}Kolormodo.com | Komodo Edit and Komodo IDE color schemes{% end %}
 {% block head %}
 <style type="text/css">
-    {{ scheme.all_css() }}
+    {{ escape(scheme.all_css()) }}
 </style>
 {% end %}
 
@@ -28,15 +28,43 @@
         </div>
         <div class="scheme-row">
             <div class="buttons-col">
+
                 {% if scheme.votes %}
-                    <a class="vote" href="#TODO">{{ scheme.votes }}</a>
+                    <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">{{ scheme.votes }}</a>
                 {% else %}
-                    <a class="vote" href="#TODO">0</a>
+                    <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">0</a>
                 {% end %}
-                <a class="favorite" href="#TODO"></a>
+
+                {% if user_favorite %}
+                    <a class="button favorite isfav" rel="nofollow" href="{{ scheme.favorite_url }}/undo"></a>
+                {% else %}
+                    <a class="button favorite" rel="nofollow" href="{{ scheme.favorite_url }}/add"></a>
+                {% end %}
+
+                {% if scheme.author == user %}
+                    <a class="button edit" rel="nofollow" href="{{ scheme.favorite_url }}"></a>
+                {% end %}
+
             </div>
             <article id="cs-{{ scheme.safe_id }}">
                 <div class="ksf-common">
+                    <div class="ksf-linenumbers">
+                        <span>1.</span>
+                        <span>2.</span>
+                        <span>3.</span>
+                        <span>4.</span>
+                        <span>5.</span>
+                        <span>6.</span>
+                        <span>7.</span>
+                        <span>8.</span>
+                        <span>9.</span>
+                        <span>10.</span>
+                        <span>11.</span>
+                        <span>12.</span>
+                        <span>13.</span>
+                        <span>14.</span>
+                        <span>15.</span>
+                    </div>
                     {{ lang_template }}
                 </div>
             </article>
@@ -53,7 +81,7 @@
                 <h2>Languages in Scheme</h2>
                 <ul>
                     {% for lang in scheme.extra_langs %}
-                        <li>{{ lang }}</li>
+                        <li>{{ escape(lang) }}</li>
                     {% end %}
                 </ul>
                 <span style="clear:both; display:block; height:1px;"></span>
@@ -92,6 +120,61 @@
 {% block script %}
     <script type="text/javascript">
         activatePreviewLanguage();
+        var favLock = false;
+        var voteLock = false;
+
+        $('a.favorite').click(function() {
+            if (!favLock) {
+                var a = $(this);
+                favLock = true;
+
+                $.ajax({
+                    url: a.attr('href'),
+                    type: 'GET',
+                    success: function(data, status, xhr) {
+                        if (a.hasClass('isfav')) {
+                            a.removeClass('isfav');
+                            a.attr('href', a.attr('href').replace('/add', '/undo'));
+                        }
+                        else {
+                            a.addClass('isfav');
+                            a.attr('href', a.attr('href').replace('/undo', '/add'));
+                        }
+                    },
+                    error: function() {
+                        alert('A server error prevented you from favoriting this scheme.  Try again later.');
+                    },
+                    complete: function() {
+                        favLock = false;
+                    }
+                });
+            }
+            return false;
+        });
+
+        $('a.vote').click(function() {
+            if(!voteLock) {
+                var a = $(this);
+                voteLock = true;
+
+                $.ajax({
+                    url: a.attr('href'),
+                    type: 'GET',
+                    success: function(data, status, xhr) {
+                        var num = Number(a.text());
+                        a.text(num+1);
+                    },
+                    error: function(xhr, status, error) {
+                        alert('You already voted for this scheme.');
+                    },
+                    complete: function() {
+                        voteLock = false;
+                    }
+                });
+            }
+            return false;
+        });
+
     </script>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script>

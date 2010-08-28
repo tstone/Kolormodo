@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from google.appengine.ext import db
+from urllib import quote
 import helpers
+
 
 class ColorScheme(db.Expando):
     author = db.UserProperty()
@@ -29,11 +31,19 @@ class ColorScheme(db.Expando):
 
     @property
     def download_url(self):
-        return '/download/%s/%s.ksf' % (self.key().id(), self.slug)
+        return '/scheme/download/%s/%s.ksf' % (self.safe_id, quote(self.slug))
 
     @property
     def preview_url(self):
-        return '/preview/%s/%s' % (self.key().id(), self.slug)
+        return '/scheme/preview/%s/%s' % (self.safe_id, quote(self.slug))
+
+    @property
+    def favorite_url(self):
+        return '/scheme/favorite/%s' % self.safe_id
+
+    @property
+    def vote_url(self):
+        return '/scheme/vote/%s' % self.safe_id
 
     def all_css(self):
         css = self.general_css
@@ -66,3 +76,25 @@ class ColorScheme(db.Expando):
         except:
             self.download_count = 1
         self.save()
+
+    def increment_votes(self):
+        # Google analytics?
+        try:
+            if self.votes:
+                self.votes += 1
+            else:
+                self.votes = 1
+        except:
+            self.votes = 1
+        self.save()
+
+
+class Favorite(db.Model):
+    user = db.UserProperty()
+    scheme = db.ReferenceProperty(ColorScheme)
+    date = db.DateTimeProperty(auto_now_add=True)
+
+class SchemeVotes(db.Model):
+    user = db.UserProperty()
+    scheme = db.ReferenceProperty(ColorScheme)
+    date = db.DateTimeProperty(auto_now_add=True)
