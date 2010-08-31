@@ -1,0 +1,12 @@
+<hgroup class="ad">
+    {% if 'img' in ad %}
+    <div class="img">
+        <a class="img" href="{{ ad['url'] }}"><img src="/static/ads{{ ad['img'] }}" /></a>
+    </div>
+    {% end %}
+    {% if 'desc' in ad %}
+    <div class="desc">
+        <a href="{{ ad['url'] }}">{{ ad['desc'] }}</a>
+    </div>
+    {% end %}
+</hgroup>

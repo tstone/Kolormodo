@@ -43,7 +43,9 @@ class BaseHandler(tornado.web.RequestHandler):
             'cpp',
             'perl',
             'ruby',
-            'css'
+            'css',
+            'php',
+            'xml',
         ]
         lang = lang.lower()
         if lang in authorized_langs:
@@ -174,12 +176,14 @@ class PreviewHandler(SchemeHandler):
         }
 
         values['lang'] = self.get_argument('lang', None)
+        logging.info('lang: %s' % values['lang'])
         if not values['lang']:
             ud = self.data.get_user_details(self.current_user)
             if ud.preferred_lang:
                 values['lang'] = ud.preferred_lang
             else:
                 values['lang'] = 'python'
+        logging.info('lang: %s' % values['lang'])
 
         values['lang_template'] = self.get_lang_template(values['lang'])
 

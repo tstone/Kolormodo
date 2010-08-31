@@ -15,7 +15,7 @@
                 <li id="sort-votes" {% if sort == 'votes' %}class="active"{% end %}>
                     <a href="{{ modules.set_sort_url(querystring, 'votes') }}" title="Sort color schemes by # of votes">Votes<em></em></a>
                 </li>
-                <li id="sort-new" {% if sort == 'new' %}class="active"{% end %}>
+                <li id="sort-new" {% if sort == 'new' or not sort %}class="active"{% end %}>
                     <a href="{{ modules.set_sort_url(querystring, 'new') }}" title="Sort color schemes by how recently they were created" style="width:43px;">Newest<em></em></a>
                 </li>
             </ul>
@@ -26,8 +26,10 @@
                 <option value="" selected="selected">Choose a preview language</option>
                 <option value="css">CSS</option>
                 <option value="perl">Perl</option>
+                <option value="php">PHP</option>
                 <option value="python">Python</option>
                 <option value="ruby">Ruby</option>
+                <option value="xml">XML</option>
             </select>
         </div>
     </nav>
@@ -41,7 +43,13 @@
     </hgroup>
 
     {{ modules.PaginationControls(pagination) }}
+{% end %}
 
+{% block above_ads %}
+    <hgroup class="similar">
+        <h1>About Kolormodo.com</h1>
+        <p>An unofficial site for color schemes for Komodo Edit or IDE built on <a href="http://code.google.com/appengine/">Google AppEngine (python)</a>.</p>
+    </hgroup>
 {% end %}
 
 {% block script %}

@@ -10,7 +10,7 @@
             {% if page - 1 == p['current_page'] %}
                 <li class="current" title="Current Page (Page {{ page }})"></li>
             {% else %}
-                <li><a title="Page {{ page }}" class="page" href="{{ modules.querystring_replace(querystring, 'p', page) }}"></li>
+                <li><a title="Page {{ page }}" class="page" href="{{ modules.querystring_replace(querystring, 'p', page) }}"></a></li>
             {% end %}
         {% end %}
     </ul>

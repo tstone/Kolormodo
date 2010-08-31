@@ -7,7 +7,7 @@ window.log = function(){
       console.log( Array.prototype.slice.call(arguments) );
     }
     else{
-      alert(arguments);
+      
     }
   }
 };

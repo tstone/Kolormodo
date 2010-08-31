@@ -78,6 +78,18 @@ header nav .user .notifications { font-weight: normal; font-size: 11px; padding-
 #colors { background: transparent url("/static/img/colors.png") no-repeat center center; width: 846px; height: 206px; position: absolute; z-index: 1; top: 45px; left: 60px; }
 #logo { position: absolute; top: 0; left: 875px; background: transparent url("/static/img/logoish.png") no-repeat top center; width: 208px; height: 100px; }
 
+aside.sidebar { position: absolute; top: 14px; left: 856px; width: 225px; overflow: hidden; padding: 10px; }
+aside.sidebar > hgroup { background: transparent url("/static/img/65.png") repeat; padding: 10px; margin-bottom: 20px; }
+aside.sidebar > hgroup:last-child { margin-bottom: 0; }
+aside.sidebar > hgroup h1 { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
+
+.ad > h1 { text-align: center; font-size: 13px !important; font-weight: bold; margin-bottom: 15px; }
+.ad div.img { background-color: #fff; text-align: center; }
+.ad div.img > a { display: block; text-align: center; }
+.ad div.img > a > img { max-width: 175px; max-height: 125px; }
+.ad .desc { text-align: center; width: 75%; margin-left: auto; margin-right: auto; }
+.ad .desc a { text-align: center; display: block; font-size: 11px; }
+
 #main { position: absolute; left: 10px; z-index: 3; top: 180px; width: 850px; position: relative; }
 #main #top-bar { background-color: #566371; height: 15px; margin-bottom: 0; margin-left: 7px; width: 833px; }
 #main #main-body { background: transparent url("/static/img/body-bg.png") repeat-y -2px; padding: 10px 20px 20px 27px; min-height: 650px; }
@@ -87,7 +99,7 @@ header nav .user .notifications { font-weight: normal; font-size: 11px; padding-
 .ksf-linenumbers span { display: block; padding: 2px; height: 16px; }
 .line-content { display: block; }
 article > div { height: 150px; overflow: hidden; width: 311px; }
-article > div > div { padding: 2px; overflow: hidden; word-wrap: break-word; width: 350px; height: 15px; margin-left: 40px; }
+article > div > div { padding: 2px; overflow: hidden; word-wrap: break-word; height: 15px; margin-left: 40px; }
 article > div > div .indent { padding-left: 20px; }
 article > div > div .indent-twice { padding-left: 40px; }
 article > div > div .indent-thrice { padding-left: 60px; }
@@ -114,7 +126,7 @@ hgroup.schemes a.smallbutton { position: absolute; right: 0; margin-right: -5px;
 hgroup.schemes a.preview { top: 50px; margin-top: 0; }
 hgroup.schemes a.preview > em { float: left; margin-top: 2px; margin-right: 1px; }
 hgroup.schemes a.download { top: 80px; }
-hgroup.schemes a.clickable { position: absolute; top: 0; left: 0; z-index: 1; height: 100%; width: 100%; }
+a.clickable { position: absolute; top: 0; left: 0; z-index: 1; height: 100%; width: 100%; }
 .schemes div.details { position: absolute; top: 18px; right: 19px; z-index: 5; }
 .schemes div.details > span { display: block; float: right; padding-left: 9px; text-align: right; cursor: pointer; }
 .schemes div.details > span > em { display: block; background: transparent url("/static/img/front-page-sprite.png") no-repeat; margin-top: 5px; margin-left: 2px; float: right; }
@@ -164,6 +176,13 @@ div.preview { margin-top: 15px; }
 .preview a.download span { font-size: 12px; padding-left: 3px; }
 .preview a.back { margin-left: -14px; margin-top: -13px; }
 
+aside.sidebar .similar h1 { color: #C34D58; text-shadow: #ddd 2px 2px 0; }
+aside.sidebar .similar h1 > span { color: #566371; font-weight: normal; }
+aside.sidebar .similar ul.schemes { list-style-type: none; margin-left: 0; }
+aside.sidebar .similar .schemes li { list-style-type: none; font-weight: bold; display: block; margin-bottom: 12px; position: relative; }
+aside.sidebar .similar .schemes li .colors { display: block; height: 5px; margin-bottom: 1px; }
+aside.sidebar .similar .schemes li .colors > span { display: block; height: 5px; width: 15px; margin: 0; float: left; }
+
 nav.pagination { clear: both; margin-top: 25px; text-align: right; margin-right: 70px; }
 nav.pagination .nav { float: right; text-decoration: none; font-weight: bold; font-size: 14px; text-shadow: #ddd 2px 2px 0; }
 nav.pagination .nav > em { display: block; width: 8px; height: 9px; margin-top: 5px; background: transparent url("/static/img/front-page-sprite.png") no-repeat; }
@@ -177,6 +196,8 @@ nav.pagination li.current { background-position: -685px -52px; }
 nav.pagination li.hover { background-position: -701px -52px; }
 nav.pagination li > a { display: block; position: absolute; top: 0; left: 0; height: 100%; width: 100%; }
 
+span.disclosure { font-size: 10px; color: #bbb; display: block; width: 95%; margin-top: 20px; }
+span.disclosure > a { color: #bbb; }
 
 /*
  * Print Styles

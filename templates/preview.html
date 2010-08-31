@@ -13,8 +13,10 @@
                 <option value="" selected="selected">Choose a preview language</option>
                 <option value="css">CSS</option>
                 <option value="perl">Perl</option>
+                <option value="php">PHP</option>
                 <option value="python">Python</option>
                 <option value="ruby">Ruby</option>
+                <option value="xml">XML</option>
             </select>
         </div>
         <a href="{{ back }}" class="widebutton back" title="Return to Schemes Listing page">&lt; Back to Schemes</a>
@@ -29,18 +31,23 @@
         </div>
         <div class="scheme-row">
             <div class="buttons-col">
-                <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">{{ modules.safenum(scheme.votes) }}</a>
+                {% if user %}
+                    <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">{{ modules.safenum(scheme.votes) }}</a>
 
-                {% if user_favorite %}
-                    <a class="button favorite isfav" rel="nofollow" href="{{ scheme.favorite_url }}/undo"></a>
+                    {% if user_favorite %}
+                        <a class="button favorite isfav" rel="nofollow" href="{{ scheme.favorite_url }}/undo"></a>
+                    {% else %}
+                        <a class="button favorite" rel="nofollow" href="{{ scheme.favorite_url }}/add"></a>
+                    {% end %}
+
+                    {% if scheme.author == user %}
+                        <a class="button edit" rel="nofollow" href="{{ scheme.favorite_url }}"></a>
+                    {% end %}
                 {% else %}
-                    <a class="button favorite" rel="nofollow" href="{{ scheme.favorite_url }}/add"></a>
+                    <p>
+                        <a href="{{ login_url }}">Login</a> to vote or favorite this scheme.
+                    </p>
                 {% end %}
-
-                {% if scheme.author == user %}
-                    <a class="button edit" rel="nofollow" href="{{ scheme.favorite_url }}"></a>
-                {% end %}
-
             </div>
             <article id="cs-{{ scheme.safe_id }}">
                 <div class="ksf-common {{ lang }}">
@@ -103,7 +110,10 @@
         </div>
         <div class="social-media">
             <div>
-                <a href="http://twitter.com/share" class="twitter-share-button" data-url="{{ scheme.preview_url }}" data-text="{{ escape(scheme.title) }} color scheme for #komodo" data-count="horizontal" data-via="kolormodo">Tweet</a> <!-- data-related="author's twitter:description" -->
+                <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://www.kolormodo.com/{{ scheme.preview_url }}" data-text="{{ escape(scheme.title) }} color scheme for #komodo" data-count="horizontal" data-via="kolormodo">Tweet</a> <!-- data-related="author's twitter:description" -->
+            </div>
+            <div style="margin-right:25px;">
+                <a class="DiggThisButton DiggCompact" href="http://digg.com/submit?url=http%3A//www.kolormodo.com/{{ scheme.preview_url }}"></a>
             </div>
             <div>
                 <fb:like href="{{ scheme.preview_url }}"></fb:like>
@@ -111,6 +121,10 @@
         </div>
     </div>
     <div id="fb-root"></div>
+{% end %}
+
+{% block above_ads %}
+    {{ modules.SchemesByAuthorList(scheme.author) }}
 {% end %}
 
 {% block script %}
@@ -184,5 +198,14 @@
             e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
             document.getElementById('fb-root').appendChild(e);
         }());
+    </script>
+    <script type="text/javascript">
+    (function() {
+        var s = document.createElement('SCRIPT'), s1 = document.getElementsByTagName('SCRIPT')[0];
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = 'http://widgets.digg.com/buttons.js';
+        s1.parentNode.insertBefore(s, s1);
+    })();
     </script>
 {% end %}

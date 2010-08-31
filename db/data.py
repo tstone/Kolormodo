@@ -69,6 +69,10 @@ class DataLayer(object):
         pagination = self.paginate(total, count, offset)
         return (schemes, pagination)
 
+    def get_schemes_by_user(self, user, count, sort='-view_count'):
+        logging.info(user)
+        return ColorScheme.all().filter('author = ', user).fetch(count, 0)
+
     def get_scheme(self, id):
         return ColorScheme.get_by_id(int(id))
 

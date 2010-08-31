@@ -42,6 +42,11 @@
             {% block body %}{% end %}
             <span style="clear:both; height:1px; display:block;"></span>
         </div>
+        <aside class="sidebar">
+            {% block above_ads %}{% end %}
+            {{ modules.DoubleAdMediumSquare() }}
+            {% block below_ads %}{% end %}
+        </aside>
     </div>
 
     <footer>
@@ -65,6 +70,14 @@
     <script src="/static/js/profiling/config.js?v=1"></script>
     {% end %}
     {% if not localhost %}
+    <script type="text/javascript">
+        var vglnk = { api_url: '//api.viglink.com/api', key: 'bf68d7149bf34b9f188b01283caff9de' };
+        (function(d, t) {
+          var s = d.createElement(t); s.type = 'text/javascript'; s.async = true;
+          s.src = vglnk.api_url + '/vglnk.js?key=' + vglnk.key;
+          var r = d.getElementsByTagName(t)[0]; r.parentNode.insertBefore(s, r);
+        }(document, 'script'));
+    </script>
     <script>
         var _gaq = [['_setAccount', 'UA-17994366-1'], ['_trackPageview']];
         (function(d, t) {

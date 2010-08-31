@@ -9,3 +9,21 @@ indexes:
 # manually, move them above the marker line.  The index.yaml file is
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
+
+- kind: ColorScheme
+  properties:
+  - name: author
+  - name: view_count
+    direction: desc
+
+- kind: ColorScheme
+  properties:
+  - name: author
+  - name: views
+    direction: desc
+
+- kind: ColorScheme
+  properties:
+  - name: user
+  - name: views
+    direction: desc

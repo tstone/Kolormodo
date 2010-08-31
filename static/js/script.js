@@ -38,7 +38,7 @@ var setLangTemplate = function(lang, html) {
         $(this).attr('class', 'ksf-common ' + lang).html(html);
     });
     // Update links (if present)
-    $('nav.schemes ul li a, .pagination a').each(function() {
+    $('nav.schemes ul li a, .pagination a,.schemes a.clickable').each(function() {
         var url = $(this).attr('href');
         url = removeParameterFromUrl('lang', url).replace('&&', '');
         $(this).attr('href', url + '&lang=' + lang);

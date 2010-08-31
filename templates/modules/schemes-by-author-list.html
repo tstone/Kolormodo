@@ -1,0 +1,18 @@
+{% if schemes %}
+<hgroup class="similar">
+    <h1>Popular Schemes by <span>{{ schemes[0].author.nickname() }}</span></h1>
+    <ul class="schemes">
+        {% for scheme in schemes %}
+            <li>
+                <span class="colors">
+                    {% for color in scheme.colors %}
+                        <span style="background-color: {{ color }};"></span>
+                    {% end %}
+                </span>
+                {{ escape(scheme.title) }}
+                <a class="clickable" href="{{ scheme.preview_url }}" title="{{ escape(scheme.title) }}"></a>
+            </li>
+        {% end %}
+    </ul>
+</hgroup>
+{% end %}

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 from helpers import gravatar_hash
-import os.path
 from tornado.escape import xhtml_escape
+from advertising.manager import generate_ad
+import os.path
 import tornado.web
 import logging
 import urlparse
@@ -73,6 +74,17 @@ class querystring_replace(BaseUIModule):
         else:
             return '?%s=%s' % (name, value)
 
+class AdMediumSquare(BaseUIModule):
+    def render(self):
+        ad = generate_ad('css')
+        return self.render_string('modules/ads/medium-square.html', ad=ad)
+
+class DoubleAdMediumSquare(BaseUIModule):
+    def render(self):
+        ad_1 = generate_ad('')
+        ad_2 = generate_ad('')
+        return self.render_string('modules/ads/double-ad.html', ad_1=ad_1, ad_2=ad_2,)
+
 
 class UserHeader(BaseUIModule):
     def render(self):
@@ -80,7 +92,6 @@ class UserHeader(BaseUIModule):
             return self.render_string('modules/header-user.html', gravatar_hash=gravatar_hash(self.current_user.email()))
         else:
             return self.render_string('modules/header-user.html', login_url = self.get_login_url())
-
 
 class SchemePreviewSmall(BaseUIModule):
     def render(self, scheme, lang='python'):
@@ -90,3 +101,9 @@ class SchemePreviewSmall(BaseUIModule):
 class PaginationControls(BaseUIModule):
     def render(self, pagination):
         return self.render_string('modules/pagination-controls.html', p=pagination)
+
+class SchemesByAuthorList(BaseUIModule):
+    def render(self, user):
+        schemes = self.data.get_schemes_by_user(user, 5)
+        logging.info('**************************************** schemes: %s' % schemes.count(5))
+        return self.render_string('modules/schemes-by-author-list.html', schemes=schemes)
