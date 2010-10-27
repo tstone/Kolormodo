@@ -31,6 +31,14 @@ import tornado.ioloop
 import traceback
 import unittest
 
+_next_port = 10000
+def get_unused_port():
+    """Returns a (hopefully) unused port number."""
+    global _next_port
+    port = _next_port
+    _next_port = _next_port + 1
+    return port
+
 class AsyncTestCase(unittest.TestCase):
     """TestCase subclass for testing IOLoop-based asynchronous code.
 
@@ -131,7 +139,8 @@ class AsyncTestCase(unittest.TestCase):
         Keyword arguments or a single positional argument passed to stop() are
         saved and will be returned by wait().
         '''
-        self.__stop_args = _arg or kwargs
+        assert _arg is None or not kwargs
+        self.__stop_args = kwargs or _arg
         if self.__running:
             self.io_loop.stop()
             self.__running = False
@@ -189,12 +198,14 @@ class AsyncHTTPTestCase(AsyncTestCase):
                 return Application([('/', MyHandler)...])
 
             def test_homepage(self):
+                # The following two lines are equivalent to
+                #   response = self.fetch('/')
+                # but are shown in full here to demonstrate explicit use
+                # of self.stop and self.wait.
                 self.http_client.fetch(self.get_url('/'), self.stop)
                 response = self.wait()
                 # test contents of response
     '''
-    __next_port = 10000
-
     def setUp(self):
         super(AsyncHTTPTestCase, self).setUp()
         self.__port = None
@@ -211,6 +222,17 @@ class AsyncHTTPTestCase(AsyncTestCase):
         """
         raise NotImplementedError()
 
+    def fetch(self, path, **kwargs):
+        """Convenience method to synchronously fetch a url.
+
+        The given path will be appended to the local server's host and port.
+        Any additional kwargs will be passed directly to
+        AsyncHTTPClient.fetch (and so could be used to pass method="POST",
+        body="...", etc).
+        """
+        self.http_client.fetch(self.get_url(path), self.stop, **kwargs)
+        return self.wait()
+
     def get_httpserver_options(self):
         """May be overridden by subclasses to return additional
         keyword arguments for HTTPServer.
@@ -222,10 +244,8 @@ class AsyncHTTPTestCase(AsyncTestCase):
 
         A new port is chosen for each test.
         """
-        if self.__port is not None:
-            return self.__port
-        self.__port = AsyncHTTPTestCase.__next_port
-        AsyncHTTPTestCase.__next_port = self.__port + 1
+        if self.__port is None:
+            self.__port = get_unused_port()
         return self.__port
 
     def get_url(self, path):

@@ -32,7 +32,7 @@ try:
     import fcntl
 except ImportError:
     if os.name == 'nt':
-        import win32_support as fcntl
+        from tornado import win32_support as fcntl
     else:
         raise
 
@@ -116,10 +116,10 @@ class HTTPServer(object):
 
         http_server = httpserver.HTTPServer(handle_request)
         http_server.bind(8888)
-        http_server.start() # Forks multiple sub-processes
+        http_server.start(0) # Forks multiple sub-processes
         ioloop.IOLoop.instance().start()
 
-    start() detects the number of CPUs on this machine and "pre-forks" that
+    start(0) detects the number of CPUs on this machine and "pre-forks" that
     number of child processes so that we have one Tornado process per CPU,
     all with their own IOLoop. You can also pass in the specific number of
     child processes you want to run with if you want to override this
@@ -203,6 +203,17 @@ class HTTPServer(object):
             logging.info("Pre-forking %d server processes", num_processes)
             for i in range(num_processes):
                 if os.fork() == 0:
+                    import random
+                    from binascii import hexlify
+                    try:
+                        # If available, use the same method as
+                        # random.py
+                        seed = long(hexlify(os.urandom(16)), 16)
+                    except NotImplementedError:
+                        # Include the pid to avoid initializing two
+                        # processes to the same value
+                        seed(int(time.time() * 1000) ^ os.getpid())
+                    random.seed(seed)
                     self.io_loop = ioloop.IOLoop.instance()
                     self.io_loop.add_handler(
                         self._socket.fileno(), self._handle_events,
@@ -225,7 +236,7 @@ class HTTPServer(object):
             try:
                 connection, address = self._socket.accept()
             except socket.error, e:
-                if e[0] in (errno.EWOULDBLOCK, errno.EAGAIN):
+                if e.args[0] in (errno.EWOULDBLOCK, errno.EAGAIN):
                     return
                 raise
             if self.ssl_options is not None:

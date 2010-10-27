@@ -44,6 +44,7 @@ class safenum(BaseUIModule):
             else:
                 return value
 
+
 class set_sort_url(BaseUIModule):
     def render(self, querystring, value):
         url = '?'
@@ -58,6 +59,7 @@ class set_sort_url(BaseUIModule):
             return '%s&%s=%s' % (url[:-1], 's', value)
         else:
             return '?%s=%s' % ('s', value)
+
 
 class querystring_replace(BaseUIModule):
     def render(self, querystring, name, value):
@@ -74,10 +76,12 @@ class querystring_replace(BaseUIModule):
         else:
             return '?%s=%s' % (name, value)
 
+
 class AdMediumSquare(BaseUIModule):
     def render(self):
         ad = generate_ad('css')
         return self.render_string('modules/ads/medium-square.html', ad=ad)
+
 
 class DoubleAdMediumSquare(BaseUIModule):
     def render(self):
@@ -93,10 +97,12 @@ class UserHeader(BaseUIModule):
         else:
             return self.render_string('modules/header-user.html', login_url = self.get_login_url())
 
+
 class SchemePreviewSmall(BaseUIModule):
     def render(self, scheme, lang='python'):
         template = self.handler.get_lang_template(lang)
         return self.render_string('modules/scheme-preview-small.html', scheme=scheme, lang_template=template, lang=lang)
+
 
 class PaginationControls(BaseUIModule):
     def render(self, pagination):

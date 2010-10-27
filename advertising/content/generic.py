@@ -38,7 +38,7 @@ ADS = [
     },
     {
         'url': 'http://www.amazon.com/gp/product/0735619670/ref=s9_simh_gw_p14_i1?pf_rd_m=ATVPDKIKX0DER&pf_rd_s=center-2&pf_rd_r=1EKNWZDEWK0ZS5QG881F&pf_rd_t=101&pf_rd_p=470938631&pf_rd_i=507846',
-        'img': '/amazon/codecomplete2.jpg',
+        'img': '/amazon/CodeComplete2.jpg',
         'desc': 'Code Complete 2'
     },
     {

@@ -16,7 +16,7 @@
                     <a href="{{ modules.set_sort_url(querystring, 'votes') }}" title="Sort color schemes by # of votes">Votes<em></em></a>
                 </li>
                 <li id="sort-new" {% if sort == 'new' or not sort %}class="active"{% end %}>
-                    <a href="{{ modules.set_sort_url(querystring, 'new') }}" title="Sort color schemes by how recently they were created" style="width:43px;">Newest<em></em></a>
+                    <a href="{{ modules.set_sort_url(querystring, 'new') }}" title="Sort color schemes by how recently they were added" style="width:43px;">Newest<em></em></a>
                 </li>
             </ul>
         </hgroup>
@@ -41,15 +41,23 @@
             {{ modules.SchemePreviewSmall(scheme, lang) }}
         {% end %}
     </hgroup>
-
     {{ modules.PaginationControls(pagination) }}
 {% end %}
 
 {% block above_ads %}
     <hgroup class="similar">
         <h1>About Kolormodo.com</h1>
-        <p>An unofficial site for color schemes for Komodo Edit or IDE built on <a href="http://code.google.com/appengine/">Google AppEngine (python)</a>.</p>
+        <p>An unofficial site for color schemes for Komodo Edit or IDE built on Google AppEngine (python).<br/><a href="/info/about">Read more...</a></p>
     </hgroup>
+    {% if user %}
+    <hgroup class="similar">
+        <h1>Sharing is Caring</h1>
+        <a class="widebutton" href="/share" style="margin-left:auto;margin-right:auto;">Upload a Theme</a>
+    </hgroup>
+    {% end %}
+{% end %}
+
+{% block below_ads %}
 {% end %}
 
 {% block script %}

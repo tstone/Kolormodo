@@ -34,7 +34,7 @@
 
     <div id="colors"></div>
 
-    <div id="main">
+    <div id="main" {% block main_div %}{% end %}>
         <div id="top-bar"></div>
         <div id="main-body-top"></div>
         {% block above_body %}{% end %}
@@ -46,12 +46,17 @@
             {% block above_ads %}{% end %}
             {{ modules.DoubleAdMediumSquare() }}
             {% block below_ads %}{% end %}
+            <hgroup class="about contact">
+                <h1>Not Theme Related</h1>
+                <a href="/info/about">About Kolormodo.com</a>
+                <a href="http://kolormodo.tumblr.com">Official Blog</a>
+                <a href="/info/contact">Contact &amp; Feedback</a>
+            </hgroup>
         </aside>
+
+        <footer><!-- I'm a sad footer --></footer>
     </div>
 
-    <footer>
-
-    </footer>
 
     <!-- This huge splatter of javascript files needs to be cleaned up... -->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>

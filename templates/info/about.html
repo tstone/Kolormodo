@@ -1,0 +1,56 @@
+{% extends "../_base.html" %}
+{% block title %}About{% end %}
+{% block main_div %}class="info"{% end %}
+
+{% block above_body %}
+    <nav class="schemes preview">
+        <a href="/" class="widebutton back" title="Return to Schemes Listing page">&lt; Back to Schemes</a>
+    </nav>
+{% end %}
+
+{% block body %}
+    <h1>About Kolormodo.com</h1>
+
+    <img src="/static/img/info/twisted-screen.png" style="float:right;margin-left: 10px; margin-bottom: 10px;" title="This is my Komodo Edit screen editing the CSS as I created this very page.  It's somewhat recursive.  Heh... or something.">
+
+    <p>Kolormodo.com was created by <a href="http://twitter.com/andstuff">Titus Stone</a>.  It was first launched live
+    with a partial feature set during Late Summer 2010.</p>
+
+    <p>The site is written in <a href="http://www.python.org/">Python</a>
+    on top of the <a href="http://www.tornadoweb.org/">Tornado web framework</a> running on
+    <a href="http://code.google.com/appengine/">Google App Engine</a>.  &nbsp;It was written in, as you'd
+    expect, <a href="http://www.activestate.com/komodo-edit">Komodo Edit</a>.  The themes <a href="/scheme/preview/16002/happyday">Happy Day</a>
+    and <a href="/scheme/preview/24001/fancyterminal">Fancy Terminal</a> were actually created so that
+    I'd have something nice to stare at while coding the site (I was tired of my previous theme).
+
+    <a style="float: right; margin-top: 5px;" href="http://code.google.com/appengine/">
+        <img src="http://code.google.com/appengine/images/appengine-noborder-120x30.gif" alt="Powered by Google App Engine" />
+    </a>
+    </p>
+
+    <h2>History</h2>
+
+    <p><a href="http://www.activestate.com/komodo-edit">Komodo Edit</a> by
+    ActiveState has easily found itself to be one of my
+    favorite editors for non-Microsoft languages.  It&apos;s a great blend of
+    necessary features without being overly complex or bloated (I&apos;m looking
+    at you Eclipse).  One of the outstanding features that I really like is
+    the ability to customize the color schemes.</p>
+
+    <p>However it didn&apos;t seem as if there was any stand-out place to find
+    these themes, much less search and keep track of updates to ones I
+    liked.  The other problem is that searching google for themes often
+    turned up more dead links than it did live ones and often live links
+    didn&apos;t include color schemes for languages I wrote in.</p>
+
+    <p>Kolormodo.com was started to try and address these issues and to give
+    Komodo users a singular place to find, share, and search themes.</p>
+
+    <h2 style="margin-top: 20px;">Connect Further</h2>
+
+    <ul>
+        <li>Follow along with the latest Kolormodo developments on the <a href="/info/blog">Official Blog</a></li>
+        <li>Send in <a href="/info/contact">feedback</a> about what you think of the site</li>
+        <li>Follow the creator on Twitter <a href="http://twitter.com/andstuff">@andstuff</a> <em>(not really, this is probably a boring feed)</em></li>
+    </ul>
+{% end %}

@@ -1,28 +1,43 @@
 {% extends "_base.html" %}
-{% block title %}Share Color Schemes{% endblock %}
+{% block title %}Share{% end %}
+{% block main_div %}class="info"{% end %}
 
 {% block body %}
     <div class="share">
         <noscript>
-            <p>We'd love to have you share your color schemes but it seems Javascript isn't enabled.  You'll need to it back on in order to use the share feature.</p>
+            <p>The internet would love if you shared your color schemes but it seems Javascript isn't enabled.  You'll need to it back on in order to use the share feature.</p>
         </noscript>
 
-        <div id="upload" style="display:none;">
-            <h1>Upload Color Schemes</h1>
-            <div class="col col-left">
-                <h3>Choose the schemes you'd like to upload</h3>
-                <span class="highlight">Multi-select</span> and <span class="highlight">Drag-and-Drop</span> supported by quality browsers.
-                <fieldset class="agreement">
-                    <input type="checkbox" id="agreement"><label for="agreement">I certify that I have permission to upload the following files and agree to release them under the Creative Commons license for others to freely used without compensation to myself.</label>
-                </fieldset>
-                <div id="file-uploader"></div>
-            </div>
+        <div class="upload">
+            <h2>Share a Color Theme</h2>
+            <!-- <span class="highlight">Multi-select</span> and <span class="highlight">Drag-and-Drop</span> supported by quality browsers. -->
 
+            <p class="license">
+                <img src="/static/img/cc-by-nc-sa.png" title="Creative Commons Attribution Non-Commercial Share Alike" />
+                All content uploaded to Kolormodo.com is released to the public under the
+                <a href="http://creativecommons.org/licenses/by-nc-sa/3.0" target="_blank">Creative Commons Attribution Non-Commercial Share Alike</a>.
+            </p>
+            <p class="license">
+                This means others can download, use, and remix your color scheme.  They may upload their remix to this and
+                other sites provided that they attribute you as the original author and that your original or their
+                derivitive not be used for commercial gain.
+            </p>
+
+            <div id="file-uploader"></div>
             <span class="clear"></span>
 
-            <div class="col" style="margin-top: 20px;">
-                <h3>Hint: Common Color Scheme Locations</h3>
-                <table class="common-locations">
+            <fieldset class="agreement">
+                <input type="checkbox" id="agreement" />
+                <label for="agreement">
+                    I certify that I have permission to upload the following files and
+                    agree to release them under the license stated above.
+                </label>
+                {{ xsrf_form_html() }}
+            </fieldset>
+
+            <div class="common-locations">
+                <h3>Common Color Scheme Locations by OS</h3>
+                <table>
                     <tr>
                         <td class="os">Windows Vista &amp; 7</td>
                         <td>C:\Users\&lt;Your Username&gt;\AppData\Local\ActiveState\KomodoEdit\&lt;version&gt;\schemes</td>
@@ -37,7 +52,7 @@
                     </tr>
                     <tr>
                         <td class="os">Mac OSX</td>
-                        <td>(someone email me and let me know)</td>
+                        <td>(someone <a href="mailto:webmaster@kolormodo.com">email me</a> and let me know)</td>
                     </tr>
                 </table>
             </div>
@@ -49,9 +64,9 @@
         </div>
     </div>
     &nbsp;
-{% endblock %}
+{% end %}
 
-{% block head %}<link type="text/css" rel="stylesheet" href="/static/js/fileuploader/fileuploader.css" />{% endblock %}
+{% block head %}<link type="text/css" rel="stylesheet" href="/static/js/fileuploader/fileuploader.css" />{% end %}
 {% block script %}
 <script type="text/javascript" src="/static/js/fileuploader/fileuploader.js"></script>
 <script type="text/javascript">
@@ -72,8 +87,8 @@
                             return true;
                         }
                         alert('You must agree to the terms of upload first.');
-                        $('fieldset.agreement').css('background-color', '#EB008B').css('color', 'white').click(function(){
-                            $(this).css('background-color', 'white').css('color', 'inherit');
+                        $('fieldset.agreement').css('background-color', '#C34D58').css('color', 'white').click(function(){
+                            $(this).css('background-color', 'Transparent').css('color', 'inherit');
                         });
 
                         return false;
@@ -154,4 +169,4 @@
         }
     }();
 </script>
-{% endblock %}
+{% end %}

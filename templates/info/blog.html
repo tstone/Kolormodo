@@ -1,0 +1,22 @@
+{% extends "../_base.html" %}
+{% block title %}Official Blog{% end %}
+
+{% block above_body %}
+    <nav class="schemes preview">
+        <a href="/" class="widebutton back" title="Return to Schemes Listing page">&lt; Back to Schemes</a>
+    </nav>
+{% end %}
+
+{% block body %}
+    <div class="info">
+        <script type="text/javascript" src="http://kolormodo.tumblr.com/api/read/json"></script>
+
+        <script type="text/javascript">
+            // The variable "tumblr_api_read" is now set.
+            document.write(
+                '<a href="' + tumblr_api_read[1][0]['@url'] +
+                '">Most recent Tumblr post</a>'
+            );
+        </script>
+    </div>
+{% end %}

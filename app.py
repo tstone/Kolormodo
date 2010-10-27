@@ -201,6 +201,34 @@ class PreviewHandler(SchemeHandler):
         return self.render('preview.html', **values)
 
 
+class ShareHandler(BaseHandler):
+    def get(self):
+        return self.render('share.html')
+
+
+class ShareUploadHandler(BaseHandler):
+    #@authenticated
+    def post(self):
+        filename = str(self.get_argument('qqfile'))
+        data = unquote(self.request.body).replace('+', ' ')
+
+        #try:
+        cs = self.data.new_colorscheme(data=data, user=self.current_user, filename=filename)
+        resp = {
+            'success':True,
+            'title': cs.title,
+            'colors': cs.colors,
+            'background': cs.background,
+            'langs': cs.extra_langs,
+            'filename': filename,
+            'key': str(cs.key().id()),
+        }
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.out.write(json.encode(resp))
+        #except:
+        #    self.response.out.write(json.encode({ 'success':False }))
+
+
 class FavoriteHandler(SchemeActionHandler):
     def action(self, scheme, action):
         if action == 'add':
@@ -229,7 +257,6 @@ class UserSetLangHandler(AuthActionHandler):
         return True
 
 
-
 class ApiGetTemplateHandler(BaseHandler):
     def get(self):
         template = self.get_lang_template(self.get_argument('lang', ''))
@@ -237,6 +264,18 @@ class ApiGetTemplateHandler(BaseHandler):
             return self.write(template)
         else:
             raise tornado.web.HTTPError(404)
+
+
+class StaticInfoHandler(BaseHandler):
+    def get(self, page):
+        if page == 'about':
+            self.render('info/about.html')
+        elif page == 'blog':
+            self.render('info/blog.html')
+        elif page == 'contact':
+            self.render('info/contact.html')
+        else:
+            self.render('info/about.html')
 
 
 # ----------------------------------------------------------------------------------------------------------
@@ -254,8 +293,11 @@ if __name__ == "__main__":
         (r"/scheme/download/(\d+)/([^/]+).ksf", DownloadHandler),
         (r"/scheme/favorite/(\d+)/([^/]+)", FavoriteHandler),
         (r"/scheme/vote/(\d+)", VoteHandler),
+        (r"/share/upload", ShareUploadHandler),
+        (r"/share", ShareHandler),
         (r"/user/set/lang", UserSetLangHandler),
         (r"/api/get-template", ApiGetTemplateHandler),
+        (r"/info/?(.*)", StaticInfoHandler),
     ]
 
     # Settings
