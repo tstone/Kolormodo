@@ -23,17 +23,16 @@
                 derivitive not be used for commercial gain.
             </p>
 
-            <div id="file-uploader"></div>
-            <span class="clear"></span>
-
-            <fieldset class="agreement">
-                <input type="checkbox" id="agreement" />
-                <label for="agreement">
-                    I certify that I have permission to upload the following files and
-                    agree to release them under the license stated above.
-                </label>
+            <form>
+                <fieldset class="agreement">
+                    <input type="checkbox" id="agreement" />
+                    <label for="agreement">
+                        I certify that I have permission to upload the following files and
+                        agree to release them under the license stated above.
+                    </label>
+                </fieldset>
                 {{ xsrf_form_html() }}
-            </fieldset>
+            </form>
 
             <div class="common-locations">
                 <h3>Common Color Scheme Locations by OS</h3>
