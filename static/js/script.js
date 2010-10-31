@@ -173,9 +173,78 @@ var activatePreviewLanguage = function() {
     });
 }
 
+// Modified version of sohtanka.com Simple Tabs
+// http://www.sohtanaka.com/web-design/simple-tabs-w-css-jquery/
+var SimpleTabs = function(tabs, container) {
+    container.children().hide();
+    tabs.find('li:first').addClass("active").show();
+    container.find('div:first').show();
+
+    var lis = tabs.find('li');
+    lis.click(function() {
+        lis.removeClass("active");
+        $(this).addClass("active");
+        container.children().hide();
+
+        var activeTab = $(this).find("a").attr("href");
+        $(activeTab).fadeIn(350);
+        return false;
+    });
+};
+
+var GitHubUI = function(parent) {
+    var input = parent.find('.name input');
+    var select = parent.find('.gists select');
+    var gisttext = parent.find('textarea');
+
+    var getGists = function() {
+        var name = input.val();
+        if (typeof(name) !== 'undefined' && name.length > 0) {
+            input.addClass('ajax-loading');
+            $.getJSON('http://gist.github.com/api/v1/json/gists/' + name + '?callback=?', function(data){
+                input.removeClass('ajax-loading');
+                if (typeof(data.gists) !== 'undefined') {
+                    select.children().remove();
+                    select.append('<option value="">Choose a Gist</option>');
+                    $.each(data.gists, function(index, gist){
+                        $.each(gist.files, function(i, file) {
+                            $('<option />').attr('value', gist.repo).text(file).appendTo(select);
+                        });
+                    });
+                    input.parent().fadeOut(250, function(){
+                        select.parent().fadeIn(250);
+                    });
+                }
+                else {
+                    alert('That GitHub username was not found.');
+                }
+            });
+        }
+        else {
+            alert('Please enter your GitHub username first');
+        }
+    };
+
+    parent.find('#find-gists-btn').click(function() { getGists(); });
+    input.keypress(function(e){
+        if (e.keyCode == 13 || e.which == 13 ) {
+            getGists();
+            return false;
+        }
+    });
+
+    select.change(function() {
+        var url = '/github/get-gist/' + select.val() +'/' + select.find(':selected').text();
+        parent.find('#ajax-loading').show();
+        $.get(url, function(data){
+            gisttext.val(data);
+            gisttext.parent().fadeIn(250);
+            parent.find('#ajax-loading').hide();
+        });
+    });
+};
 
 // *** Document Ready ***************************************************************************************************
 $(function() {
-
-
+    // Hello, world!
 });

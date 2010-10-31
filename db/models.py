@@ -102,3 +102,7 @@ class SchemeVotes(db.Model):
 class UserDetails(db.Model):
     user = db.UserProperty()
     preferred_lang = db.StringProperty()
+
+    @property
+    def id(self):
+        return self.key().id()

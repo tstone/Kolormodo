@@ -25,11 +25,6 @@
     <header>
         <nav>
             {{ modules.UserHeader() }}
-            <div style="color:#C34D58;margin-left:15px;font-weight: bold;">
-                BETA: THIS SITE STILL UNDER DEVELOPMENT &nbsp;&nbsp;--&nbsp;&nbsp; The <a href="http://kolormodo.tumblr.com">blog</a> has the latest news on updates.
-                <br/>
-                Last Update: Oct 26, 2010 &nbsp;&nbsp;--&nbsp;&nbsp; Feedback: <a href="mailto:webmaster@kolormodo.com">webmaster</a>
-            </div>
             <a id="logo" href="/" title="Kolormodo :: Slay the kdragon with kolor!"></a>
         </nav>
     </header>
@@ -45,6 +40,16 @@
             <span style="clear:both; height:1px; display:block;"></span>
         </div>
         <aside class="sidebar">
+            <hgroup>
+                <div>
+                    <!-- ZOMG Ugly Markup incoming! -->
+                    <center style="color:#C34D58;font-weight: bold;font-size: 18px;">THIS SITE IS STILL UNDER DEVELOPMENT</center><br/>
+                    The <a href="http://kolormodo.tumblr.com">blog</a> has the latest news on updates.<br/>
+                    <hr/>
+                    Last Update: <strong>Oct 30, 2010</strong><br/>
+                    Feedback: <a href="mailto:webmaster@kolormodo.com">webmaster</a>
+                </div>
+            </hgroup>
             {% block above_ads %}{% end %}
             {{ modules.DoubleAdMediumSquare() }}
             {% block below_ads %}{% end %}

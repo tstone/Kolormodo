@@ -37,11 +37,11 @@ sub { vertical-align: sub; font-size: smaller; }
 sup { vertical-align: super; font-size: smaller; }
 pre { padding: 15px; white-space: pre; white-space: pre-wrap; white-space: pre-line; word-wrap: break-word; }
 input[type="radio"] { vertical-align: text-bottom; }
-input[type="checkbox"] { vertical-align: bottom; *vertical-align: baseline; }
+input[type="checkbox"] { vertical-align: bottom; vertical-align: baseline; }
 .ie6 input { vertical-align: text-bottom; }
 label, input[type=button], input[type=submit], button { cursor: pointer; }
-::-moz-selection{ background: #495C87; color:#fff; text-shadow: none; }
-::selection { background: #495C87; color:#fff text-shadow: none; }
+::-moz-selection{ background: #566371; /*#495C87;*/ color:#fff; text-shadow: none; }
+::selection { background: #566371; color:#fff; text-shadow: none; }
 a:link { -webkit-tap-highlight-color: #FF5E99; }
 html { overflow-y: scroll; }
 button {  width: auto; overflow: visible; }
@@ -64,13 +64,13 @@ body { padding-left: 10px; background: #fff url("/static/img/clouds-bg.png") rep
 a { color: #566371; text-decoration: underline; }
 select { font-family: Segoe UI, Trebuchet MS, Trebuchet, Helvetica, Arial, sans-serif; color: #566371; padding: 1px; }
 
-header { height: 150px; padding-top: 5px; z-index: 2; position: absolute; top: 0; left: 20px; }
+header { height: 150px; z-index: 2; position: absolute; top: 0; left: 30px; }
 header nav { background: transparent url("/static/img/front-page-sprite.png") no-repeat -64px 0px; width: 850px; height: 45px; text-shadow: #fff 1px 1px 0; position: relative; }
 header nav > div { float: left; margin-top: 16px; margin-right: 12px; }
 header nav > div:last-child { margin-right: 0; }
 header nav .gravatar { background: transparent url("/static/img/front-page-sprite.png") no-repeat -3px -7px; width: 56px; height: 58px; padding-top: 3px; margin-left: 15px; margin-top: 0; text-align: center; }
 header nav .login { margin-left: 20px; }
-header nav .login > img { margin: 0 8px; vertical-align: middle; }
+header nav .login > img { margin: 0 8px; vertical-align: baseline; }
 header nav .user a { text-decoration: none; font-weight: bold; }
 header nav .user a:hover { text-decoration: underline; }
 header nav .user .username { font-weight: bold; font-size: 13px; }
@@ -78,7 +78,16 @@ header nav .user .notifications { font-weight: normal; font-size: 11px; padding-
 header nav .sub-tabs { margin-top: 0; margin-right: 0; position: absolute; top: 42px; left: 77px; font-size: 10px; width: 325px; z-index: 1; }
 header nav .sub-tabs a { display: block; float: left; width: 62px; height: 16px; line-height: 10px; text-align: center; background: transparent url("/static/img/front-page-sprite.png") no-repeat -64px -53px; text-decoration: none; margin-right: 5px; }
 #colors { background: transparent url("/static/img/colors.png") no-repeat center center; width: 846px; height: 206px; position: absolute; z-index: 1; top: 45px; left: 60px; }
-#logo { position: absolute; top: 0; left: 875px; background: transparent url("/static/img/logoish.png") no-repeat top center; width: 208px; height: 100px; }
+#logo { position: absolute; top: 0; left: 862px; background: transparent url("/static/img/logoish.png") no-repeat top center; width: 208px; height: 100px; }
+
+form { }
+form fieldset { }
+form fieldset.buttons { margin-top: 10px; text-align: right; }
+form input { padding: 2px; }
+form .field { display: block; margin-bottom: 8px; border: 1px solid #D0E8EF; padding: 8px; }
+form .field label { line-height: 22px; display: block; float: left; width: 125px; color: #566371; font-weight: bold; text-align: right; margin-right: 15px; }
+form .textarea textarea { width: 100%; border: none; }
+form .ajax-loading { background: url("/static/img/ajax-loading.gif") no-repeat right center; }
 
 aside.sidebar { position: absolute; top: 14px; left: 856px; width: 225px; overflow: hidden; padding: 10px; }
 aside.sidebar > hgroup { background: transparent url("/static/img/65.png") repeat; padding: 10px; margin-bottom: 20px; }
@@ -209,26 +218,49 @@ span.disclosure { font-size: 10px; color: #bbb; display: block; width: 95%; marg
 span.disclosure > a { color: #bbb; }
 
 /* Styles for the INFO pages */
-div.info { padding: 0 10px; top: 215px !important; }
-div.info h1, div.info h2, div.info h3, div.info h4 { color: #C34D58; text-shadow: #ddd 2px 2px 0; margin-bottom: 12px; }
-div.info h1 { font-size: 30px; }
-div.info h2 { font-size: 20px; }
-div.info h2 { font-size: 16px; }
-div.info p { margin-bottom: 12px; }
-div.info ul > li { margin-bottom: 8px; }
-div.info ul > li a { font-weight: bold; }
-div.info #top-bar { display: none; }
-div.info #main-body-top { display: none; }
-div.info #main-body { background-image: none !important; }
+.info { padding: 0 10px; top: 125px !important; }
+.info h1, .info h2, .info h3, .info h4 { color: #C34D58; text-shadow: #ddd 2px 2px 0; margin-bottom: 12px; }
+.info h1 { font-size: 30px; }
+.info h2 { font-size: 20px; }
+.info h2 { font-size: 16px; }
+.info p { margin-bottom: 12px; }
+.info ul > li { margin-bottom: 8px; }
+.info ul > li a { font-weight: bold; }
+.info #top-bar { display: none; }
+.info .preview a.back { margin-left: -4px; }
+.info aside.sidebar { top: 0; padding-top: 8px; }
 
-.info .share h2 { font-size: 25px; }
-.share .upload { width: 75%; }
-.share .upload .agreement { padding: 8px; margin: 15px 0; background-color: #E5F7FD; border: 1px solid #CCCCCC; }
-.share .upload .license img { float: right; margin: 5px auto auto 5px; }
-.share .upload .license a { font-weight: bold; }
-.share .upload table td { padding: 2px; font-size: 12px; }
-.share .upload table .os { width: 125px; }
-.share .upload .common-locations { margin-top: 25px; }
+/* Share Page */
+.info .share .license img { float: right; margin: 5px auto auto 5px; }
+.info .share .license a { font-weight: bold; }
+.info .share table td { padding: 2px; font-size: 12px; }
+.info .share table .os { width: 125px; }
+.info .share .upload { padding: 10px; border: 1px solid #D0E8EF; }
+.info .share .common-locations { margin-top: 25px; }
+.info .share ul.tabs { margin-top: 10px; }
+.info .share .col { width: 45%; float: left; margin-right: 5%; margin-bottom: 15px; }
+.info .share .col:last-child { margin-right: 0; }
+.info .share .tab-container > div { min-height: 200px; }
+.info .share #DirectInput textarea { height: 165px; }
+.info .share #GitHub textarea { height: 125px; }
+.info .share #GitHub .name input { width: 250px; float: left; }
+.info .share #GitHub .name a { margin-left: 15px; float: left; margin-top: -3px; }
+.info .share #GitHub .gists span { margin-left: 8px; }
+.info .share #GitHub .gists span img { vertical-align: middle; }
+.info .share .agreement { padding: 8px; margin: 15px 0; border: 1px solid #D0E8EF; clear: both; margin-top: 20px; }
+.info .share .error-panel { margin-top: 15px; }
+
+ul.tabs { margin: 0; padding: 0; float: left; list-style: none; height: 32px; border-bottom: 1px solid #D0E8EF; border-left: 1px solid #D0E8EF; width: 100%; }
+ul.tabs li { float: left; margin: 0; padding: 0; height: 31px;	line-height: 31px; border: 1px solid #D0E8EF; background: #E1F2F7; border-left: none; margin-bottom: -1px; overflow: hidden; position: relative; }
+ul.tabs li a { text-decoration: none; display: block; font-size: 13px; padding: 0 20px; border: 1px solid #fff; outline: none; }
+ul.tabs li a:hover { background: #566371; color: #fff; }
+ul.tabs li a img { vertical-align: middle; margin-right: 3px; }
+html ul.tabs li.active, html ul.tabs li.active a:hover  { background: #fff; color: #566371; border-bottom: 1px solid #fff; }
+.tab-container { clear: both; background: #fff; border: 1px solid #D0E8EF; border-top: none; }
+.tab-container > div { padding: 15px; }
+
+.error-panel { width: 50%; margin-left: auto; margin-right: auto; clear: both; font-weight: bold; padding: 15px 15px 15px 120px; border: solid 1px #F26B69; box-shadow: 2px 2px 2px #ccc; background: Transparent url("/static/img/error-x.png") no-repeat left center; }
+.error-panel h2 { color: #C34D58; margin-bottom: 8px; text-shadow: 2px 2px 0 #eee; font-size: 20px; }
 
 /* Print Styles */
 @media print {

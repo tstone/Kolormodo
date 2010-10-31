@@ -27,7 +27,7 @@
     <div class="preview">
         <a class="download widebutton" href="{{ scheme.download_url }}" title="download {{ escape(scheme.title) }} color scheme">download<span>({{ len(scheme.raw) / 1000 }}k)</span></a>
         <div class="header">
-            <h1>{{ escape(scheme.title) }}<span class="by">by</span><a href="/user/???">{{ escape(scheme.author.nickname()) }}</a>
+            <h1>{{ escape(scheme.title) }}<span class="by">by</span><a href="/user/{{ scheme.author.user_id() }}">{{ escape(scheme.author.nickname()) }}</a>
         </div>
         <div class="scheme-row">
             <div class="buttons-col">

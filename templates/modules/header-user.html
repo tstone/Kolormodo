@@ -8,11 +8,12 @@
         <a class="username" href="#">{{ user.nickname() }}</a>
         <!-- <span class="notifications">(<a href="#">3 new up-votes</a>)</span> -->
     </div>
-    <!-- <div class="sub-tabs">
-        <a href="/share">Upload</a>
-        <a href="#">Account</a>
-        <a href="#">Log Out</a>
-    </div> -->
+    <div class="sub-tabs">
+        <a href="/" title="View Color Schcmes">Schemes</a>
+        <a href="/share" title="Share your Komodo Color Scheme">Share</a>
+        <a href="/user/account" title="Manage your Kolormodo.com Account">Account</a>
+        <!-- <a href="#" title="{S Goodbye">Log Out</a> -->
+    </div>
 {% else %}
     <div class="user login">
         <a href="{{ login_url }}" rel="nofollow">Login</a><img src="/static/img/look.png" />Login to vote, set preferences, and share your own themes.

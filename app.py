@@ -10,6 +10,8 @@ import uimodules
 import socket
 
 from google.appengine.api import users
+from google.appengine.api import urlfetch
+from google.appengine.api import mail
 from decorators import authenticated, administrator
 from db.data import DataLayer
 
@@ -35,6 +37,8 @@ class BaseHandler(tornado.web.RequestHandler):
             'url': self.request.uri,
             'querystring': self.request.arguments,
         }
+        if not 'error' in values:
+            values['error'] = None
         return tornado.web.RequestHandler.render_string(self, template_name, **dict(values,**kwargs))
 
     def get_lang_template_path(self, lang):
@@ -134,6 +138,11 @@ class AuthSchemeHandler(BaseHandler):
         else:
             raise tornado.web.HTTPError(404)
 
+    def get_with_scheme(self, scheme):
+        """Override to implement"""
+        pass
+
+
 class SchemeActionHandler(AuthSchemeHandler):
     def action(self, *args):
         """Override to implement"""
@@ -147,6 +156,7 @@ class SchemeActionHandler(AuthSchemeHandler):
                     self.redirect(self.request.headers['Referer'])
                 else:
                     self.redirect('/')
+
 
 class AuthActionHandler(BaseHandler):
     @authenticated
@@ -171,12 +181,11 @@ class DownloadHandler(SchemeHandler):
 class PreviewHandler(SchemeHandler):
     def get_with_scheme(self, scheme, slug=None):
         scheme.increment_views()
-        values = {
-            'scheme': scheme,
-        }
-
+        values = { 'scheme': scheme }
         values['lang'] = self.get_argument('lang', None)
+
         logging.info('lang: %s' % values['lang'])
+
         if not values['lang']:
             ud = self.data.get_user_details(self.current_user)
             if ud.preferred_lang:
@@ -202,31 +211,46 @@ class PreviewHandler(SchemeHandler):
 
 
 class ShareHandler(BaseHandler):
+    @authenticated
     def get(self):
-        return self.render('share.html')
+        return self.render('share.html', error=None)
 
-
-class ShareUploadHandler(BaseHandler):
-    #@authenticated
     def post(self):
-        filename = str(self.get_argument('qqfile'))
-        data = unquote(self.request.body).replace('+', ' ')
+        # User must agree
+        if not self.get_argument('agreement', None) == 'on':
+            self.render('share.html', error='Please agree to the license before sharing that theme.')
 
-        #try:
-        cs = self.data.new_colorscheme(data=data, user=self.current_user, filename=filename)
-        resp = {
-            'success':True,
-            'title': cs.title,
-            'colors': cs.colors,
-            'background': cs.background,
-            'langs': cs.extra_langs,
-            'filename': filename,
-            'key': str(cs.key().id()),
-        }
-        self.response.headers['Content-Type'] = 'application/json'
-        self.response.out.write(json.encode(resp))
-        #except:
-        #    self.response.out.write(json.encode({ 'success':False }))
+        data = None
+        filename = 'New Scheme.ksf'
+
+        # Grab scheme data
+        logging.info('in files: %s' % 'fileupload' in self.request.files)
+        logging.info('self.request.files: %s' % self.request.files)
+
+        if 'fileupload' in self.request.files:
+            fileupload = self.request.files['fileupload'][0]
+            data = fileupload['body']
+            filename = fileupload['filename']
+            logging.info('data = %s' % data)
+        else:
+            directinput = self.get_argument('directinput', None)
+            if directinput:
+                data = directinput
+            else:
+                data = self.get_argument('github-gist', None)
+
+        # Store in DB
+        if not data:
+            self.render('share.html', error='That scheme appears to be blank.  Nice one.')
+        else:
+            try:
+                cs = self.data.new_colorscheme(data=data, user=self.current_user, filename=filename)
+                #self.redirect('/scheme/edit/%s' % cs.key().id())
+                self.redirect('/?s=new')
+            except:
+                # Record the failure in case it was a valid file
+                mail.send_mail(sender="Webapp <webapp@example.com>", to="Webmaster <webmaster@kolormodo.com>", subject="Could Not Parse Color Scheme", body=data)
+                self.render('share.html', error='The uploaded scheme does not appear to be a valid Komodo Color Scheme -OR- it is a newer version scheme file than is currently supported.')
 
 
 class FavoriteHandler(SchemeActionHandler):
@@ -248,6 +272,14 @@ class VoteHandler(SchemeActionHandler):
             raise tornado.web.HTTPError(403)
             return False
         return True
+
+
+class EditSchemeHandler(AuthSchemeHandler):
+    def get_with_scheme(self, scheme):
+        # Make sure this user owns this scheme
+        if not scheme.author == self.get_current_user():
+            self.redirect('/')
+        self.render('edit.html', scheme=scheme)
 
 
 class UserSetLangHandler(AuthActionHandler):
@@ -278,6 +310,24 @@ class StaticInfoHandler(BaseHandler):
             self.render('info/about.html')
 
 
+class GetGistHandler(BaseHandler):
+    def get(self, id, filename):
+        try:
+            resp = urlfetch.fetch('http://gist.github.com/raw/%s/%s' % (id, filename))
+            self.finish(resp.content)
+        except:
+            self.finish('')
+
+
+class UserAccountHandler(BaseHandler):
+    def get(self):
+        return self.render('account.html')
+
+class UserProfileHandler(BaseHandler):
+    def get(self, uid):
+        return self.render('user.html')
+
+
 # ----------------------------------------------------------------------------------------------------------
 #  Applicaiton Initialization
 # ----------------------------------------------------------------------------------------------------------
@@ -293,9 +343,12 @@ if __name__ == "__main__":
         (r"/scheme/download/(\d+)/([^/]+).ksf", DownloadHandler),
         (r"/scheme/favorite/(\d+)/([^/]+)", FavoriteHandler),
         (r"/scheme/vote/(\d+)", VoteHandler),
-        (r"/share/upload", ShareUploadHandler),
+        (r"/scheme/edit/(\d+)", EditSchemeHandler),
         (r"/share", ShareHandler),
+        (r"/github/get-gist/(\d+)/([^/]+)", GetGistHandler),
+        (r"/user/(\d+)", UserProfileHandler),
         (r"/user/set/lang", UserSetLangHandler),
+        (r"/user/account", UserAccountHandler),
         (r"/api/get-template", ApiGetTemplateHandler),
         (r"/info/?(.*)", StaticInfoHandler),
     ]

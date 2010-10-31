@@ -113,3 +113,7 @@ class SchemesByAuthorList(BaseUIModule):
         schemes = self.data.get_schemes_by_user(user, 5)
         logging.info('**************************************** schemes: %s' % schemes.count(5))
         return self.render_string('modules/schemes-by-author-list.html', schemes=schemes)
+
+class ErrorPanel(BaseUIModule):
+    def render(self, error):
+        return self.render_string('modules/error-panel.html', error=error)
