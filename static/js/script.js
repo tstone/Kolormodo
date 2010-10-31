@@ -123,20 +123,27 @@ var activatePreviewLanguage = function() {
 
     var defaultBtn = $('#main .lang .default');
     defaultBtn.click(function() {
-        $.ajax({
-            url: '/user/set/lang',
-            data: { lang: select.val() },
-            type: 'GET',
-            success: function() {
-                defaultBtn.text('Lang Set');
-                setTimeout(function() {
-                    defaultBtn.text('Default');
-                }, 5000);
-            },
-            error: function() {
-                alert('A server error prevented your default language from being set.  Try again later.');
-            }
-        });
+        // Make sure the user is logged in (if not show login dialog)
+        if (typeof(LOGIN_URL) !== 'undefined') {
+            if (LOGIN_URL.indexOf('?') > -1) { LOGIN_URL += '&' } else { LOGIN_URL += '?' }
+            document.location.href = LOGIN_URL + 'setlang=' + select.val();
+        }
+        else {
+            $.ajax({
+                url: '/user/set/lang',
+                data: { lang: select.val() },
+                type: 'GET',
+                success: function() {
+                    defaultBtn.text('Lang Set');
+                    setTimeout(function() {
+                        defaultBtn.text('Default');
+                    }, 5000);
+                },
+                error: function() {
+                    alert('A server error prevented your default language from being set.  Try again later.');
+                }
+            });
+        }
         return false;
     });
 
@@ -155,9 +162,15 @@ var activatePreviewLanguage = function() {
                 return;
             }
             // Check if it's in HTML5 local storage
-            if (Modernizr.localstorage) {
-                checkLangLocalstorage(val);
-                return;
+            if (typeof(TEMPLATE_REFRESH) !== 'undefined' && TEMPLATE_REFRESH) {
+                // Force content to reload once
+                TEMPLATE_REFRESH = false;
+            }
+            else {
+                if (Modernizr.localstorage) {
+                    checkLangLocalstorage(val);
+                    return;
+                }
             }
             // If not fetch it from the server
             fetchLangTemplate(val, function(html) {
@@ -169,8 +182,12 @@ var activatePreviewLanguage = function() {
                 defaultBtn.fadeOut(500);
             }
         }
-
     });
+
+    // Set the proper selected language
+    if (select.attr('selectedlang')) {
+        select.val(select.attr('selectedlang'));
+    }
 }
 
 // Modified version of sohtanka.com Simple Tabs
@@ -192,6 +209,7 @@ var SimpleTabs = function(tabs, container) {
     });
 };
 
+// GitHub UI used for scheme upload
 var GitHubUI = function(parent) {
     var input = parent.find('.name input');
     var select = parent.find('.gists select');

@@ -8,6 +8,7 @@ import tornado.wsgi
 import wsgiref.handlers
 import uimodules
 import socket
+import re
 
 from google.appengine.api import users
 from google.appengine.api import urlfetch
@@ -27,6 +28,9 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def get_login_url(self):
         return users.create_login_url(self.request.uri)
+
+    def get_logout_url(self):
+        return users.create_logout_url(self.request.uri)
 
     def render_string(self, template_name, **kwargs):
         # Let the templates access the users module to generate login URLs
@@ -99,12 +103,17 @@ class HomeHandler(BaseHandler):
         values['pagination'] = pagination
 
         lang = self.get_argument('lang', None)
-        if not lang:
-            ud = self.data.get_user_details(self.current_user)
-            if ud.preferred_lang:
-                lang = ud.preferred_lang
-            else:
-                lang = 'python'
+        setlang = self.get_argument('lang', None)
+        if setlang:
+            lang = setlang
+            self.data.set_user_lang(self.current_user, lang)
+        else:
+            if not lang:
+                ud = self.data.get_user_details(self.current_user)
+                if ud.preferred_lang:
+                    lang = ud.preferred_lang
+                else:
+                    lang = 'python'
         values['lang'] = lang
 
         self.render('home.html', **values)
@@ -196,9 +205,8 @@ class PreviewHandler(SchemeHandler):
 
         values['lang_template'] = self.get_lang_template(values['lang'])
 
-        if 'Referer' in self.request.headers:
-            values['back'] = self.request.headers['Referer']
-        else:
+        values['back'] = self.request.headers.get('Referer', '/')
+        if not re.match(r'/$|/\?', values['back']):
             values['back'] = '/'
 
         if self.current_user:
@@ -246,7 +254,7 @@ class ShareHandler(BaseHandler):
             try:
                 cs = self.data.new_colorscheme(data=data, user=self.current_user, filename=filename)
                 #self.redirect('/scheme/edit/%s' % cs.key().id())
-                self.redirect('/?s=new')
+                self.redirect(cs.edit_url)
             except:
                 # Record the failure in case it was a valid file
                 mail.send_mail(sender="Webapp <webapp@example.com>", to="Webmaster <webmaster@kolormodo.com>", subject="Could Not Parse Color Scheme", body=data)
@@ -285,7 +293,9 @@ class EditSchemeHandler(AuthSchemeHandler):
 class UserSetLangHandler(AuthActionHandler):
     @authenticated
     def action(self):
-        self.data.set_user_lang(self.current_user, self.get_argument('lang', 'python'))
+        lang = self.get_argument('lang', 'python')
+        logging.info('************************* lang = %s' % lang)
+        self.data.set_user_lang(self.current_user, lang)
         return True
 
 
@@ -327,6 +337,9 @@ class UserProfileHandler(BaseHandler):
     def get(self, uid):
         return self.render('user.html')
 
+class GoogleWebmasterConfirmation(tornado.web.RequestHandler):
+    def get(self):
+        self.finish('google-site-verification: google7af070066b359388.html')
 
 # ----------------------------------------------------------------------------------------------------------
 #  Applicaiton Initialization
@@ -351,6 +364,7 @@ if __name__ == "__main__":
         (r"/user/account", UserAccountHandler),
         (r"/api/get-template", ApiGetTemplateHandler),
         (r"/info/?(.*)", StaticInfoHandler),
+        (r"/google7af070066b359388.html", GoogleWebmasterConfirmation),
     ]
 
     # Settings

@@ -9,7 +9,7 @@
 {% block above_body %}
     <nav class="schemes preview">
         <div class="lang">
-            <select>
+            <select selectedlang="{{ lang }}">
                 <option value="" selected="selected">Choose a preview language</option>
                 <option value="css">CSS</option>
                 <option value="perl">Perl</option>
@@ -31,22 +31,18 @@
         </div>
         <div class="scheme-row">
             <div class="buttons-col">
-                {% if user %}
-                    <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">{{ modules.safenum(scheme.votes) }}</a>
+                <a class="button vote" rel="nofollow" href="{{ scheme.vote_url }}">{{ modules.safenum(scheme.votes) }}</a>
 
-                    {% if user_favorite %}
-                        <a class="button favorite isfav" rel="nofollow" href="{{ scheme.favorite_url }}/undo"></a>
-                    {% else %}
-                        <a class="button favorite" rel="nofollow" href="{{ scheme.favorite_url }}/add"></a>
-                    {% end %}
-
-                    {% if scheme.author == user %}
-                        <a class="button edit" rel="nofollow" href="{{ scheme.favorite_url }}"></a>
-                    {% end %}
+                {% if user_favorite %}
+                    <a class="button favorite isfav" rel="nofollow" href="{{ scheme.favorite_url }}/undo"></a>
                 {% else %}
-                    <p>
-                        <a href="{{ login_url }}">Login</a> to vote or favorite this scheme.
-                    </p>
+                    <a class="button favorite" rel="nofollow" href="{{ scheme.favorite_url }}/add"></a>
+                {% end %}
+
+                {% if user %}
+                    {% if scheme.author == user %}
+                        <a class="button edit" rel="nofollow" href="{{ scheme.edit_url }}"></a>
+                    {% end %}
                 {% end %}
             </div>
             <article id="cs-{{ scheme.safe_id }}">
@@ -137,52 +133,64 @@
 
         $('a.favorite').click(function() {
             if (!favLock) {
-                var a = $(this);
-                favLock = true;
+                // Make sure the user is logged in
+                if (typeof(LOGIN_URL) !== 'undefined') {
+                    document.location.href = LOGIN_URL;
+                }
+                else {
+                    var a = $(this);
+                    favLock = true;
 
-                $.ajax({
-                    url: a.attr('href'),
-                    type: 'GET',
-                    success: function(data, status, xhr) {
-                        if (a.hasClass('isfav')) {
-                            a.removeClass('isfav');
-                            a.attr('href', a.attr('href').replace('/add', '/undo'));
+                    $.ajax({
+                        url: a.attr('href'),
+                        type: 'GET',
+                        success: function(data, status, xhr) {
+                            if (a.hasClass('isfav')) {
+                                a.removeClass('isfav');
+                                a.attr('href', a.attr('href').replace('/add', '/undo'));
+                            }
+                            else {
+                                a.addClass('isfav');
+                                a.attr('href', a.attr('href').replace('/undo', '/add'));
+                            }
+                        },
+                        error: function() {
+                            alert('A server error prevented you from favoriting this scheme.  Try again later.');
+                        },
+                        complete: function() {
+                            favLock = false;
                         }
-                        else {
-                            a.addClass('isfav');
-                            a.attr('href', a.attr('href').replace('/undo', '/add'));
-                        }
-                    },
-                    error: function() {
-                        alert('A server error prevented you from favoriting this scheme.  Try again later.');
-                    },
-                    complete: function() {
-                        favLock = false;
-                    }
-                });
+                    });
+                }
             }
             return false;
         });
 
         $('a.vote').click(function() {
             if(!voteLock) {
-                var a = $(this);
-                voteLock = true;
+                // Make sure the user is logged in
+                if (typeof(LOGIN_URL) !== 'undefined') {
+                    document.location.href = LOGIN_URL;
+                }
+                else {
+                    var a = $(this);
+                    voteLock = true;
 
-                $.ajax({
-                    url: a.attr('href'),
-                    type: 'GET',
-                    success: function(data, status, xhr) {
-                        var num = Number(a.text());
-                        a.text(num+1);
-                    },
-                    error: function(xhr, status, error) {
-                        alert('You already voted for this scheme.');
-                    },
-                    complete: function() {
-                        voteLock = false;
-                    }
-                });
+                    $.ajax({
+                        url: a.attr('href'),
+                        type: 'GET',
+                        success: function(data, status, xhr) {
+                            var num = Number(a.text());
+                            a.text(num+1);
+                        },
+                        error: function(xhr, status, error) {
+                            alert('You already voted for this scheme.');
+                        },
+                        complete: function() {
+                            voteLock = false;
+                        }
+                    });
+                }
             }
             return false;
         });

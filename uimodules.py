@@ -18,6 +18,9 @@ class BaseUIModule(tornado.web.UIModule):
     def get_login_url(self):
         return self.handler.get_login_url()
 
+    def get_logout_url(self):
+        return self.handler.get_logout_url()
+
 
 class numOrZero(BaseUIModule):
     def render(self, value):
@@ -93,7 +96,10 @@ class DoubleAdMediumSquare(BaseUIModule):
 class UserHeader(BaseUIModule):
     def render(self):
         if self.current_user:
-            return self.render_string('modules/header-user.html', gravatar_hash=gravatar_hash(self.current_user.email()))
+            return self.render_string('modules/header-user.html',
+                                      gravatar_hash = gravatar_hash(self.current_user.email()),
+                                      logout_url = self.get_logout_url()
+                                      )
         else:
             return self.render_string('modules/header-user.html', login_url = self.get_login_url())
 

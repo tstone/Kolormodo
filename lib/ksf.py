@@ -30,10 +30,6 @@ class KSFColor(object):
             h[0:2],
         )
 
-        logging.debug('KSF value = %s' % value)
-        logging.debug('h = %s' % h)
-        logging.debug('self.hex = %s' % self.hex)
-
     def get_rgb(self, default=None):
         if not self.r or not self.g or not self.b:
             return default
@@ -66,6 +62,7 @@ class KSFColor(object):
         """Returns a score of 0-100 for how dark the color is (0 being darkest)"""
         avg = float(self.r + self.g + self.b) / float(3)
         return int((avg / float(255)) * 100)
+
 
 class KSFProcessor(object):
     """A class to process and understand KSF komodo scheme files"""

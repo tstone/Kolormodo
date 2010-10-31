@@ -12,10 +12,16 @@
         <a href="/" title="View Color Schcmes">Schemes</a>
         <a href="/share" title="Share your Komodo Color Scheme">Share</a>
         <a href="/user/account" title="Manage your Kolormodo.com Account">Account</a>
-        <!-- <a href="#" title="{S Goodbye">Log Out</a> -->
+        <a href="{{ logout_url }}" title="{S Goodbye">Log Out</a>
     </div>
+    <script type="text/javascript">
+        var LOGOUT_URL = '{{ logout_url }}';
+    </script>
 {% else %}
     <div class="user login">
         <a href="{{ login_url }}" rel="nofollow">Login</a><img src="/static/img/look.png" />Login to vote, set preferences, and share your own themes.
     </div>
+    <script type="text/javascript">
+        var LOGIN_URL = '{{ login_url }}';
+    </script>
 {% end %}

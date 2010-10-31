@@ -45,6 +45,10 @@ class ColorScheme(db.Expando):
     def vote_url(self):
         return '/scheme/vote/%s' % self.safe_id
 
+    @property
+    def edit_url(self):
+        return '/scheme/edit/%s' % self.safe_id
+
     def all_css(self):
         css = self.general_css
         for lang in self.extra_langs:

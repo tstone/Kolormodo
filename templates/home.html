@@ -22,7 +22,7 @@
         </hgroup>
         <div class="lang">
             <a class="smallbutton default" href="#" title="Make this language your default preview language" style="display:none;">Default</a>
-            <select>
+            <select selectedlang="{{ lang }}">
                 <option value="" selected="selected">Choose a preview language</option>
                 <option value="css">CSS</option>
                 <option value="perl">Perl</option>
@@ -62,6 +62,7 @@
 
 {% block script %}
     <script type="text/javascript">
+        TEMPLATE_REFRESH = true; // Temporarily force clients to reload new Python template
         $(function() {
             storeInTemplateLang($('.schemes article .ksf-common').get(0), '{{ lang }}');
             activatePreviewLanguage();
