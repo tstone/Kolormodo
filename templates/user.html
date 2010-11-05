@@ -1,11 +1,55 @@
 {% extends "_base.html" %}
-{% block title_override %}User ???{% end %}
-{% block main_div %}class="info"{% end %}
+{% block title %}{{ escape(user_details.safe_nickname) }}{% end %}
+{% block main_div %}class="info profile"{% end %}
 {% block head %}
 {% end %}
 
+{% block above_body %}
+    <nav class="schemes preview">
+        <a href="/" class="widebutton back" title="Return to Schemes Listing page">&lt; Back to Schemes</a>
+    </nav>
+{% end %}
+
 {% block body %}
-    <h1>Coming Soon!</h2>
+    <h1>{{ escape(user_details.safe_nickname) }}</h1>
+    <div class="profile clearfix">
+        <div class="profile-img">
+            <img src="http://www.gravatar.com/avatar/{{ gravatar_hash }}.jpg?d=identicon&s=150&r=pg" />
+        </div>
+        <div class="profile-fields">
+            <form>
+                {% if user_details.website %}
+                <div class="field">
+                    <label>Website:</label>
+                    <a href="{{ escape(user_details.website) }}">{{ escape(user_details.website) }}</a>
+                </div>
+                {% end %}
+                {% if user_details.bio %}
+                <div class="field">
+                    <label>Bio:</label>
+                    <span>{{ escape(user_details.bio) }}</span>
+                </div>
+                {% end %}
+                {% if user_details.github_name %}
+                <div class="field">
+                    <label>GitHub:</label>
+                    <a href="http://github.com/{{ escape(user_details.github_name) }}">{{ escape(user_details.github_name) }}</a>
+                </div>
+                {% end %}
+                {% if user_details.twitter %}
+                <div class="field">
+                    <label>Twitter:</label>
+                    <a href="http://twitter.com/{{ escape(user_details.twitter) }}">{{ escape(user_details.twitter) }}</a>
+                </div>
+                {% end %}
+            </form>
+        </div>
+    </div>
+
+    <!-- <h1 style="clear:both;margin-top:20px;">Settings</h1>
+    <div class="settings">
+    </div> -->
+
 {% end %}
 
 {% block script %}

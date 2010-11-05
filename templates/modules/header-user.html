@@ -5,7 +5,7 @@
         </a>
     </div>
     <div class="user">
-        <a class="username" href="#">{{ user.nickname() }}</a>
+        <a class="username" href="/user/{{ user_details.id }}">{{ user_details.safe_nickname }}</a>
         <!-- <span class="notifications">(<a href="#">3 new up-votes</a>)</span> -->
     </div>
     <div class="sub-tabs">

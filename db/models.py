@@ -20,6 +20,7 @@ class ColorScheme(db.Expando):
     view_count = db.IntegerProperty()
     favorite_count = db.IntegerProperty()
     votes = db.IntegerProperty()
+    url = db.StringProperty()
 
     @property
     def safe_id(self):
@@ -92,7 +93,6 @@ class ColorScheme(db.Expando):
             self.votes = 1
         self.save()
 
-
 class Favorite(db.Model):
     user = db.UserProperty()
     scheme = db.ReferenceProperty(ColorScheme)
@@ -106,7 +106,22 @@ class SchemeVotes(db.Model):
 class UserDetails(db.Model):
     user = db.UserProperty()
     preferred_lang = db.StringProperty()
+    nickname = db.StringProperty()
+    email = db.StringProperty()
+    website = db.StringProperty()
+    bio = db.TextProperty()
+    github_name = db.StringProperty()
+    stackoverflow_name = db.StringProperty()
+    twitter = db.StringProperty()
 
     @property
     def id(self):
         return self.key().id()
+
+    @property
+    def safe_nickname(self):
+        return self.nickname or self.user.nickname()
+
+    @property
+    def safe_email(self):
+        return self.email or self.user.email()

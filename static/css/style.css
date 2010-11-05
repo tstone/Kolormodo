@@ -83,8 +83,9 @@ header nav .sub-tabs a { display: block; float: left; width: 62px; height: 16px;
 form { }
 form fieldset { }
 form fieldset.buttons { margin-top: 10px; text-align: right; }
-form input { padding: 2px; }
-form .field { display: block; margin-bottom: 8px; border: 1px solid #D0E8EF; padding: 8px; }
+form input { padding: 2px; border: solid 1px #bbb; }
+form textarea { border: solid 1px #bbb; }
+form .field { display: block; margin-bottom: 12px; }
 form .field label { line-height: 22px; display: block; float: left; width: 125px; color: #566371; font-weight: bold; text-align: right; margin-right: 15px; }
 form .textarea textarea { width: 100%; border: none; }
 form .ajax-loading { background: url("/static/img/ajax-loading.gif") no-repeat right center; }
@@ -177,7 +178,8 @@ div.preview { margin-top: 15px; }
 .preview .shadow { display: block; height: 12px; width: 714px; margin: 0 auto 0 88px; background: transparent url("/static/img/preview-shadow.png") no-repeat top center; }
 .preview .details { margin-left: 95px; margin-top: 10px; padding-bottom: 15px; margin-bottom: 15px; border-bottom: solid 1px #566371; }
 .preview .details h2 { color: #C34D58; font-size: 18px; text-shadow: #ddd 2px 2px 0; margin-bottom: 12px; }
-.preivew .details .desc { margin-left: 95px; padding-bottom: 15px; margin-bottom: 15px; border-bottom: solid 1px #566371; }
+.preview .details .desc { padding-bottom: 15px; margin-bottom: 15px; border-bottom: solid 1px #566371; }
+.preview .details .desc h2 { margin-bottom: 5px; }
 .preview .details .langs { width: 490px; float: left; border-right: solid 1px #566371; }
 .preview .details .langs ul { list-style-type: none; margin-left: 5px; }
 .preview .details .langs li { background: transparent url("/static/img/preview-page-sprite.png") no-repeat -332px -73px; padding-left: 20px; margin-left: 0; list-style-type: none; display: block; width: 85px; margin-right: 15px; margin-bottom: 10px; float: left; }
@@ -220,7 +222,7 @@ span.disclosure > a { color: #bbb; }
 /* Styles for the INFO pages */
 .info { padding: 0 10px; top: 125px !important; }
 .info h1, .info h2, .info h3, .info h4 { color: #C34D58; text-shadow: #ddd 2px 2px 0; margin-bottom: 12px; }
-.info h1 { font-size: 30px; }
+.info h1 { font-size: 26px; }
 .info h2 { font-size: 20px; }
 .info h2 { font-size: 16px; }
 .info p { margin-bottom: 12px; }
@@ -248,7 +250,19 @@ span.disclosure > a { color: #bbb; }
 .info .share #GitHub .gists span { margin-left: 8px; }
 .info .share #GitHub .gists span img { vertical-align: middle; }
 .info .share .agreement { padding: 8px; margin: 15px 0; border: 1px solid #D0E8EF; clear: both; margin-top: 20px; }
+.info .share .agreement input { float: left; margin-right: 10px; }
+.info .share .agreement label { float: left; width: 95%; }
 .info .share .error-panel { margin-top: 15px; }
+.info .share form .field { display: block; margin-bottom: 8px; border: 1px solid #D0E8EF; padding: 8px; }
+
+/* Account */
+.profile .profile-img { width: 150px; margin-right: 20px; float: left; }
+.profile .profile-img img { border: solid 1px #ccc; }
+.profile .profile-fields { float: left; width: 520px; }
+.profile .profile-fields .field label { line-height: 16px; width: 150px; }
+.profile .profile-fields .field input { width: 275px; }
+.profile .profile-fields .field textarea { width: 350px; height: 100px; }
+.profile .profile-fields .buttons .widebutton { margin-left: 161px; margin-top: 12px; }
 
 ul.tabs { margin: 0; padding: 0; float: left; list-style: none; height: 32px; border-bottom: 1px solid #D0E8EF; border-left: 1px solid #D0E8EF; width: 100%; }
 ul.tabs li { float: left; margin: 0; padding: 0; height: 31px;	line-height: 31px; border: 1px solid #D0E8EF; background: #E1F2F7; border-left: none; margin-bottom: -1px; overflow: hidden; position: relative; }

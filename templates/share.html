@@ -37,6 +37,7 @@
             <ul class="tabs">
                 <li><a href="#Upload">By Upload</a></li>
                 <li><a href="#DirectInput">By Direct Input</a></li>
+                <!-- <li><a href="#Url">By Url</a></li> -->
                 <li><a href="#GitHub">By GitHub</a></li>
             </ul>
 
@@ -65,7 +66,7 @@
                             </tr>
                             <tr>
                                 <td class="os">Mac OSX</td>
-                                <td>(someone <a href="mailto:webmaster@kolormodo.com">email me</a> and let me know)</td>
+                                <td>~/Library/Application Support/KomodoEdit/&lt;version&gt;/schemes</td>
                             </tr>
                         </table>
                     </div>
@@ -78,6 +79,20 @@
                         <textarea name="directinput"></textarea>
                     </div>
                 </div>
+
+                <!-- Url -->
+                <!-- <div id="Url">
+                    <div class="field name">
+                        <label>Github Username:</label>
+                        <input type="text" id="github-username"></input>
+                        <a href="#GetGists" id="find-gists-btn" class="smallbutton">Get Gists</a>
+                        <span class="clearfix"></span>
+                    </div>
+                    <div class="field textarea"  style="display:none;">
+                        <textarea name="github-gist" id="github-gist"></textarea>
+                    </div>
+                    <input type="hidden" id="scheme-url" name="scheme-url" />
+                </div> -->
 
                 <!-- GitHub -->
                 <div id="GitHub">
@@ -100,9 +115,17 @@
 
             </div>
 
-            {{ xsrf_form_html() }}
+            <div class="field" style="margin-top:10px;">
+                <label>Scheme Title:</label>
+                <input type="text" id="title" name="title" style="width:300px;" />
+            </div>
 
-            <fieldset class="agreement">
+            <div class="field">
+                <label>Scheme Description:</label>
+                <textarea name="desc" style="width:300px;height:125px;"></textarea>
+            </div>
+
+            <fieldset class="agreement clearfix">
                 <input type="checkbox" id="agreement" name="agreement" />
                 <label for="agreement">
                     I certify that I have permission to upload the above color scheme and
@@ -114,7 +137,9 @@
                 <a href="#Submit" class="widebutton" id="share-btn">Share Scheme</a>
             </fieldset>
 
+                {{ xsrf_form_html() }}
             {% end %}
+
         </form>
 
     </div>
@@ -126,17 +151,31 @@
     $(function() {
         new SimpleTabs($('ul.tabs'), $('.tab-container'));
         new GitHubUI($('#GitHub'));
-        // Require agreement client-side
+
         $('#share-btn').click(function() {
+            var valid = true;
+            // Require agreement client-side
             if (typeof($('#agreement:checked').val()) === 'undefined') {
                 alert('Please agree to the licensing terms before sharing this scheme.');
-                $('#agreement').css('background-color', '#C34D58');
-                $('#agreement').css('color', '#fff');
+                $('fieldset.agreement').css('background-color', '#C34D58');
+                $('fieldset.agreement').css('color', '#fff');
+                valid = false;
             }
-            else {
+            // Require a title
+            if ($('#title').val() === '') {
+                alert('Please enter a title for this scheme.');
+                valid = false;
+            }
+            // Submit form if still valid
+            if (valid) {
                 $('#share-form').submit();
-                return false;
             }
+            return false;
+        });
+        // Reset fields on focus/click
+        $('#agreement').change(function(){
+            $('fieldset.agreement').css('background-color', '#fff');
+            $('fieldset.agreement').css('color', 'inherit');
         });
     });
 </script>

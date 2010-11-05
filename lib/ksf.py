@@ -12,31 +12,37 @@ class KSFColor(object):
         self.g = None
         self.b = None
 
-        if ksf_color_value:
+        if not ksf_color_value == None:
             self.load_ksf_color_value(ksf_color_value)
 
     def load_ksf_color_value(self, value):
-        # KSF color value is BGR hex represented as a base 10 integer
-        h = '%x' % value
-        while len(h) < 6:
-            h = '0%s' % h
+        if value == '0' or value == 0 or not type(value) is int:
+            self.hex = "000000"
+            self.r = 0
+            self.g = 0
+            self.b = 0
+        else:
+            # KSF color value is BGR hex represented as a base 10 integer
+            h = '%x' % value
+            while len(h) < 6:
+                h = '0%s' % h
 
-        self.b = int(h[0:2], 16)
-        self.g = int(h[2:4], 16)
-        self.r = int(h[4:6], 16)
-        self.hex = '%s%s%s' % (
-            h[4:6],
-            h[2:4],
-            h[0:2],
-        )
+            self.b = int(h[0:2], 16)
+            self.g = int(h[2:4], 16)
+            self.r = int(h[4:6], 16)
+            self.hex = '%s%s%s' % (
+                h[4:6],
+                h[2:4],
+                h[0:2],
+            )
 
     def get_rgb(self, default=None):
-        if not self.r or not self.g or not self.b:
+        if self.r == None or self.g == None or self.b == None:
             return default
         return (self.r, self.g, self.b)
 
     def get_bgr(self, default=None):
-        if not self.r or not self.g or not self.b:
+        if self.r == None or self.g == None or self.b == None:
             return default
         return (self.b, self.g, self.r)
 
@@ -60,8 +66,11 @@ class KSFColor(object):
 
     def get_tonality(self):
         """Returns a score of 0-100 for how dark the color is (0 being darkest)"""
-        avg = float(self.r + self.g + self.b) / float(3)
-        return int((avg / float(255)) * 100)
+        if self.r and self.g and self.b:
+            avg = float(self.r + self.g + self.b) / float(3)
+            return int((avg / float(255)) * 100)
+        else:
+            return None
 
 
 class KSFProcessor(object):
@@ -116,7 +125,7 @@ class KSFProcessor(object):
         def safe_append(value):
             if 'fore' in value and isinstance(value['fore'], KSFColor):
                 if format == 'html_hex':
-                    rv = value['fore'].get_html_hex()
+                    rv = value['fore'].get_html_hex('#fff')
                 elif format == 'rgb':
                     rv = value['fore'].get_rgb()
                 elif format == 'bgr':
@@ -125,14 +134,22 @@ class KSFProcessor(object):
                 if rv and not rv in self._primary_colors:
                     self._primary_colors.append(rv)
 
-        safe_append(self.common_styles['classes'])
-        safe_append(self.common_styles['comments'])
-        safe_append(self.common_styles['functions'])
-        safe_append(self.common_styles['identifiers'])
-        safe_append(self.common_styles['keywords'])
-        safe_append(self.common_styles['numbers'])
-        safe_append(self.common_styles['operators'])
-        safe_append(self.common_styles['strings'])
+        if 'classes' in self.common_styles:
+            safe_append(self.common_styles['classes'])
+        if 'comments' in self.common_styles:
+            safe_append(self.common_styles['comments'])
+        if 'functions' in self.common_styles:
+            safe_append(self.common_styles['functions'])
+        if 'identifiers' in self.common_styles:
+            safe_append(self.common_styles['identifiers'])
+        if 'keywords' in self.common_styles:
+            safe_append(self.common_styles['keywords'])
+        if 'numbers' in self.common_styles:
+            safe_append(self.common_styles['numbers'])
+        if 'operators' in self.common_styles:
+            safe_append(self.common_styles['operators'])
+        if 'strings' in self.common_styles:
+            safe_append(self.common_styles['strings'])
 
         if self.booleans.get('preferFixed', True):
             safe_append(self.common_styles['default_fixed'])
@@ -151,6 +168,8 @@ class KSFProcessor(object):
         else:
             self._background = self.common_styles['default_proportional']['back']
 
+        if not self._background:
+            self._background = KSFColor(ksf_color_value=0)
         return self._background
 
 
@@ -167,7 +186,7 @@ class KSFProcessor(object):
         for section in ksf_data.split('\n\n'):
             m = re.search('([\w]+)(?: )?=(?: )?(.+)', section, DOTALL)
             if m:
-                # Format data strings
+                # Format data strings to JSON-style
                 raw = m.group(2).strip()
                 raw = raw.replace('True', "'True'").replace('False', "'False'")
                 raw = raw.replace('None', "''")
@@ -228,7 +247,10 @@ class KSFProcessor(object):
             if key in iter:
                 if iscolor:
                     if hasattr(iter[key], 'get_html_hex'):
-                        return '%s: %s; ' % (css_attr, iter[key].get_html_hex())
+                        if 'key' == 'back':
+                            return '%s: %s; ' % (css_attr, iter[key].get_html_hex('#000'))
+                        else:
+                            return '%s: %s; ' % (css_attr, iter[key].get_html_hex('#fff'))
                 elif css_attr == 'font-weight':
                     val = str(iter[key])
                     if val == '1' or val == 'True':
@@ -298,22 +320,22 @@ class KSFProcessor(object):
         if self.booleans.get('caretLineVisible', False):
             if 'caretLineBack' in self.colors:
                 if hasattr(self.colors['caretLineBack'], 'get_html_hex'):
-                    css += '%s.ksf-line-highlight { background-color: %s }\n' % (css_prefix, self.colors['caretLineBack'].get_html_hex())
+                    css += '%s.ksf-line-highlight { background-color: %s }\n' % (css_prefix, self.colors['caretLineBack'].get_html_hex('#000'))
 
         if 'selBack' in self.colors:
             s = ''
             if hasattr(self.colors['selBack'], 'get_html_hex'):
-                s += 'background-color:%s; ' % self.colors['selBack'].get_html_hex()
+                s += 'background-color:%s; ' % self.colors['selBack'].get_html_hex('#000')
             if self.booleans.get('useSelFore', False):
                 if 'selFore' in self.colors:
                     if hasattr(self.colors['selFore'], 'get_html_hex'):
-                        s += 'color:%s; ' % self.colors['selFore'].get_html_hex()
+                        s += 'color:%s; ' % self.colors['selFore'].get_html_hex('#fff')
 
                         # Build a cascading list of classes to make sure we override them all
                         foreOverride = ''
                         for key,value in styles.items():
                             foreOverride += '%s.ksf-selected .ksf-%s,\n' % (css_prefix, key)
-                        css += '%s { color: %s }\n' % ( foreOverride[:-2], self.colors['selFore'].get_html_hex() )
+                        css += '%s { color: %s }\n' % ( foreOverride[:-2], self.colors['selFore'].get_html_hex('#fff') )
 
             css += '%s.ksf-selected { %s}\n' % (css_prefix, s)
 

@@ -1,11 +1,63 @@
 {% extends "_base.html" %}
-{% block title_override %}Your Account{% end %}
-{% block main_div %}class="info"{% end %}
+{% block title %}Your Account{% end %}
+{% block main_div %}class="info account"{% end %}
 {% block head %}
 {% end %}
 
 {% block body %}
-    
+    <h1>Your Account</h1>
+    <div class="profile clearfix">
+        <div class="profile-img">
+            <img src="http://www.gravatar.com/avatar/{{ gravatar_hash }}.jpg?d=identicon&s=150&r=pg" />
+            <a class="smallbutton" title="Change your Profile Image at Gravatar.com" href="http://www.gravatar.com">Change</a>
+        </div>
+        <div class="profile-fields">
+            <form id="profile-form" method="POST">
+                <h2>Basic Account Info</h2>
+                <div class="field">
+                    <label>Nickname</label>
+                    <input type="text" value="{{ user_details.safe_nickname }}" name="nickname" />
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input type="text" value="{{ user_details.safe_email }}" name="email" />
+                </div>
+                <div class="field">
+                    <label>Bio</label>
+                    <textarea name="bio">{{ user_details.bio or "" }}</textarea>
+                </div>
+
+                <h2>Social Connections</h2>
+                <div class="field">
+                    <label>Website or Blog</label>
+                    <input type="text" value="{{ user_details.website or "" }}" name="website" />
+                </div>
+                <div class="field">
+                    <label>GitHub Username</label>
+                    <input type="text" value="{{ user_details.github_name or "" }}" name="github-user" />
+                </div>
+                <div class="field">
+                    <label>StackOverflow Username</label>
+                    <input type="text" value="{{ user_details.stackoverflow_name or "" }}" name="stackoverflow" />
+                </div>
+                <div class="field">
+                    <label>Twitter Username</label>
+                    <input type="text" value="{{ user_details.twitter or "" }}" name="twitter" />
+                </div>
+
+                {{ xsrf_form_html() }}
+
+                <fieldset class="buttons">
+                    <a href="javascript:$('#profile-form').submit();" class="widebutton">Save Profile</a>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <!-- <h1 style="clear:both;margin-top:20px;">Settings</h1>
+    <div class="settings">
+    </div> -->
+
 {% end %}
 
 {% block script %}

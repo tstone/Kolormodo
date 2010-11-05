@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from google.appengine.api import memcache
 from google.appengine.ext import db
 from db.models import *
 from lib.ksf import KSFProcessor, KSFColor
@@ -23,10 +23,10 @@ class DataLayer(object):
         logging.info(p)
         return p
 
-    def new_colorscheme(self, filename=None, data=None, user=None):
+    def new_colorscheme(self, title='New Scheme', description='', data=None, user=None, url=''):
         """Create a new ColorScheme record based on KSF data"""
         ksf = KSFProcessor(ksf_data=data)
-        title = filename[0:len(filename)-4].replace('<','').replace('>','')        # Drop .ksf from the end
+        #title = filename[0:len(filename)-4].replace('<','').replace('>','')        # Drop .ksf from the end
         langs = [lang for lang,value in ksf.lang_styles.items()]
 
         # Build static property values
@@ -38,6 +38,8 @@ class DataLayer(object):
             colors = ksf.get_primary_colors(),
             background = ksf.get_background_color().get_html_hex(),
             background_tone = ksf.get_background_color().get_tonality(),
+            description = description,
+            url = url,
         )
         # Save to generate ID
         cs.put()
@@ -63,11 +65,28 @@ class DataLayer(object):
                     pass
             cs.put()
 
-    def get_colorschemes(self, count, offset, sort):
-        schemes = ColorScheme.all().order(sort).fetch(count, offset)
-        total = ColorScheme.all().order(sort).count(200)
-        pagination = self.paginate(total, count, offset)
+    def get_colorschemes(self, count, offset, sort, force_load=False):
+        # Get the default front page query from cache (if present)
+        if sort == '-published' and offset == 0 and count == 10 and not force_load:
+            scheme_key = 'schemes_-published_0_10'
+            total_key = 'total_-published_0_10'
+            # Hit Memcache
+            mc = memcache.get_multi([scheme_key, total_key])
+            if scheme_key in mc and total_key in mc:
+                schemes = mc[scheme_key]
+                pagination = self.paginate(mc[total_key], 10, offset)
+            else:
+                # Cache for 6 hrs (sorry, not enough users)
+                schemes,pagination = self.get_colorschemes(count, offset, sort, force_load=True)
+                memcache.add_multi({ scheme_key: schemes, total_key: pagination['total'], }, time=21600)
+        else:
+            schemes = ColorScheme.all().order(sort).fetch(count, offset)
+            total = ColorScheme.all().order(sort).count(200)
+            pagination = self.paginate(total, count, offset)
         return (schemes, pagination)
+
+    def clear_colorscheme_cache(self):
+        memcache.delete_multi(['schemes_-published_0_10', 'total_-published_0_10'])
 
     def get_schemes_by_user(self, user, count, sort='-view_count'):
         logging.info(user)
@@ -102,12 +121,32 @@ class DataLayer(object):
             scheme.increment_votes()
             return True
 
-    def get_user_details(self, user):
-        ud = UserDetails.all().filter('user = ', user).get()
-        if not ud:
-            ud = UserDetails(user=user, preferred_lang='python')    # Everybody loves Python!
-            ud.save()
+    def get_user_details(self, user=None, uid=None):
+        ud = None
+
+        if user:
+            mc_key = 'ud_user_%s' % user.user_id()
+            ud = memcache.get(mc_key)
+            if not ud:
+                ud = UserDetails.all().filter('user = ', user).get()
+                # Create if not present but user
+                if not ud:
+                    ud = UserDetails(user=user, preferred_lang='python',)    # Everybody loves Python!
+                    ud.save()
+                memcache.set(mc_key, ud, 3600)  # 1 hour
+        if uid:
+            ud = UserDetails.get_by_id(int(uid))
+
         return ud
+
+    def update_user_details(self, user, values):
+        ud = self.get_user_details(user)
+        for attr, val in values.items():
+            try:
+                setattr(ud, attr, val)
+            except:
+                pass
+        ud.save()
 
     def set_user_lang(self, user, lang):
         ud = self.get_user_details(user)

@@ -27,5 +27,5 @@
     </article>
     <a class="smallbutton preview" title="Preview {{ escape(scheme.title) }}" href="{{ scheme.preview_url }}">Preview</a>
     <a class="smallbutton download" title="Download {{ escape(scheme.title) }}" href="{{ scheme.download_url }}">Download</a>
-    <a class="clickable" href="{{ scheme.preview_url }}" title="Preview {{ escape(scheme.title) }} by {{ escape(scheme.author.nickname()) }}"></a>
+    <a class="clickable" href="{{ scheme.preview_url }}" title="Preview {{ escape(scheme.title) }} by {{ escape(author_details.safe_nickname) }}"></a>
 </div>

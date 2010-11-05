@@ -9,7 +9,7 @@
 {% block above_body %}
     <nav class="schemes preview">
         <div class="lang">
-            <select selectedlang="{{ lang }}">
+            <select selectedlang="{{ lang }}" style="display:none;">
                 <option value="" selected="selected">Choose a preview language</option>
                 <option value="css">CSS</option>
                 <option value="perl">Perl</option>
@@ -27,7 +27,7 @@
     <div class="preview">
         <a class="download widebutton" href="{{ scheme.download_url }}" title="download {{ escape(scheme.title) }} color scheme">download<span>({{ len(scheme.raw) / 1000 }}k)</span></a>
         <div class="header">
-            <h1>{{ escape(scheme.title) }}<span class="by">by</span><a href="/user/{{ scheme.author.user_id() }}">{{ escape(scheme.author.nickname()) }}</a>
+            <h1>{{ escape(scheme.title) }}<span class="by">by</span><a href="/user/{{ author_details.id }}">{{ escape(author_details.safe_nickname) }}</a>
         </div>
         <div class="scheme-row">
             <div class="buttons-col">
@@ -117,10 +117,6 @@
         </div>
     </div>
     <div id="fb-root"></div>
-{% end %}
-
-{% block above_ads %}
-    {{ modules.SchemesByAuthorList(scheme.author) }}
 {% end %}
 
 {% block script %}

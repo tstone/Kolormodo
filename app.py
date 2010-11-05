@@ -9,12 +9,25 @@ import wsgiref.handlers
 import uimodules
 import socket
 import re
+import urllib
 
 from google.appengine.api import users
 from google.appengine.api import urlfetch
 from google.appengine.api import mail
+from google.appengine.api import memcache
 from decorators import authenticated, administrator
 from db.data import DataLayer
+from helpers import gravatar_hash
+
+LANGS = [
+    'python',
+    'cpp',
+    'perl',
+    'ruby',
+    'css',
+    'php',
+    'xml',
+]
 
 class BaseHandler(tornado.web.RequestHandler):
     data = DataLayer()
@@ -37,7 +50,8 @@ class BaseHandler(tornado.web.RequestHandler):
         values = {
             'users': users,
             'user': self.current_user,
-            'localhost': (self.request.host == 'localhost'),
+            'user_details': self.data.get_user_details(user=self.current_user),
+            'localhost': (self.request.host == 'localhost:8080'),
             'url': self.request.uri,
             'querystring': self.request.arguments,
         }
@@ -46,30 +60,30 @@ class BaseHandler(tornado.web.RequestHandler):
         return tornado.web.RequestHandler.render_string(self, template_name, **dict(values,**kwargs))
 
     def get_lang_template_path(self, lang):
-        authorized_langs = [
-            'python',
-            'cpp',
-            'perl',
-            'ruby',
-            'css',
-            'php',
-            'xml',
-        ]
         lang = lang.lower()
-        if lang in authorized_langs:
+        if lang in LANGS:
             return os.path.join(os.path.dirname(__file__), "lang-snippets/", '%s.html' % lang)
         else:
             return ''
 
     def get_lang_template(self, lang):
-        path = self.get_lang_template_path(lang)
-        if path:
-            f = open(path)
-            html = f.read()
-            f.close()
+        lang = lang.lower()
+        if lang in LANGS:
+            # Check first in cache first
+            mc_key = 'lang_template_%s' % lang
+            html = memcache.get(mc_key)
+            if not html:
+                path = self.get_lang_template_path(lang)
+                if path:
+                    try:
+                        f = open(path)
+                        html = f.read()
+                        memcache.set(mc_key, html)
+                        f.close()
+                    except:
+                        logging.error('COULD NOT LOAD LANGUAGE TEMPLATE: %s' % path)
             return html
-        else:
-            return ''
+        return ''
 
 
 class HomeHandler(BaseHandler):
@@ -97,6 +111,7 @@ class HomeHandler(BaseHandler):
 
         per_page = 10
         offset = page * per_page
+
         schemes,pagination = self.data.get_colorschemes(per_page, offset, sort)
 
         values['schemes'] = schemes
@@ -109,11 +124,11 @@ class HomeHandler(BaseHandler):
             self.data.set_user_lang(self.current_user, lang)
         else:
             if not lang:
-                ud = self.data.get_user_details(self.current_user)
-                if ud.preferred_lang:
-                    lang = ud.preferred_lang
-                else:
-                    lang = 'python'
+                lang = 'python'
+                if self.current_user:
+                    ud = self.data.get_user_details(user=self.current_user)
+                    if ud.preferred_lang:
+                        lang = ud.preferred_lang
         values['lang'] = lang
 
         self.render('home.html', **values)
@@ -191,17 +206,15 @@ class PreviewHandler(SchemeHandler):
     def get_with_scheme(self, scheme, slug=None):
         scheme.increment_views()
         values = { 'scheme': scheme }
+        values['author_details'] = self.data.get_user_details(user=scheme.author)
         values['lang'] = self.get_argument('lang', None)
 
-        logging.info('lang: %s' % values['lang'])
-
         if not values['lang']:
-            ud = self.data.get_user_details(self.current_user)
-            if ud.preferred_lang:
-                values['lang'] = ud.preferred_lang
-            else:
-                values['lang'] = 'python'
-        logging.info('lang: %s' % values['lang'])
+            values['lang'] = 'python'
+            if self.current_user:
+                ud = self.data.get_user_details(user=self.current_user)
+                if ud.preferred_lang:
+                    values['lang'] = ud.preferred_lang
 
         values['lang_template'] = self.get_lang_template(values['lang'])
 
@@ -228,18 +241,12 @@ class ShareHandler(BaseHandler):
         if not self.get_argument('agreement', None) == 'on':
             self.render('share.html', error='Please agree to the license before sharing that theme.')
 
-        data = None
-        filename = 'New Scheme.ksf'
-
         # Grab scheme data
-        logging.info('in files: %s' % 'fileupload' in self.request.files)
-        logging.info('self.request.files: %s' % self.request.files)
-
+        data = None
         if 'fileupload' in self.request.files:
             fileupload = self.request.files['fileupload'][0]
             data = fileupload['body']
             filename = fileupload['filename']
-            logging.info('data = %s' % data)
         else:
             directinput = self.get_argument('directinput', None)
             if directinput:
@@ -247,18 +254,23 @@ class ShareHandler(BaseHandler):
             else:
                 data = self.get_argument('github-gist', None)
 
+        title = self.get_argument('title', '')
+        desc = self.get_argument('desc', '')
+        url = self.get_argument('gist-url', '')
+
         # Store in DB
         if not data:
             self.render('share.html', error='That scheme appears to be blank.  Nice one.')
         else:
             try:
-                cs = self.data.new_colorscheme(data=data, user=self.current_user, filename=filename)
-                #self.redirect('/scheme/edit/%s' % cs.key().id())
-                self.redirect(cs.edit_url)
+                cs = self.data.new_colorscheme(data=data, user=self.current_user, title=title, description=desc, url=url)
+                self.data.clear_colorscheme_cache()
+                self.redirect('/?s=new')
+                #self.redirect(cs.edit_url)
             except:
                 # Record the failure in case it was a valid file
-                mail.send_mail(sender="Webapp <webapp@example.com>", to="Webmaster <webmaster@kolormodo.com>", subject="Could Not Parse Color Scheme", body=data)
-                self.render('share.html', error='The uploaded scheme does not appear to be a valid Komodo Color Scheme -OR- it is a newer version scheme file than is currently supported.')
+                logging.error(data)
+                self.render('share.html', error='<p>The uploaded scheme does not appear to be a valid Komodo Color Scheme -OR- it is a newer version scheme file than is currently supported.</p><p>A raw copy of your color scheme has been recorded so that we can improve our upload process.</p>')
 
 
 class FavoriteHandler(SchemeActionHandler):
@@ -294,7 +306,6 @@ class UserSetLangHandler(AuthActionHandler):
     @authenticated
     def action(self):
         lang = self.get_argument('lang', 'python')
-        logging.info('************************* lang = %s' % lang)
         self.data.set_user_lang(self.current_user, lang)
         return True
 
@@ -323,19 +334,55 @@ class StaticInfoHandler(BaseHandler):
 class GetGistHandler(BaseHandler):
     def get(self, id, filename):
         try:
-            resp = urlfetch.fetch('http://gist.github.com/raw/%s/%s' % (id, filename))
-            self.finish(resp.content)
+            url = 'http://gist.github.com/raw/%s/%s' % (id, urllib.quote(filename))
+            resp = urlfetch.fetch(url)
+            if resp:
+                self.finish(resp.content)
+            else:
+                self.finish('')
         except:
             self.finish('')
 
 
 class UserAccountHandler(BaseHandler):
+    @authenticated
     def get(self):
-        return self.render('account.html')
+        values = {
+            'gravatar_hash': gravatar_hash(self.current_user.email()),
+            'user_details': self.data.get_user_details(user=self.current_user)
+        }
+        return self.render('account.html', **values)
+
+    @authenticated
+    def post(self):
+        # Figure out which we're doing, profile or settings
+        nickname = self.get_argument('nickname', None)
+        if nickname:
+            values = {
+                'nickname': nickname,
+                'email': self.get_argument('email', None),
+                'website': self.get_argument('website', None),
+                'bio': self.get_argument('bio', None),
+                'github_name': self.get_argument('github-name', None),
+                'stackoverflow_name': self.get_argument('stackoverflow-name', None),
+                'twitter': self.get_argument('twitter', None),
+            }
+        self.data.update_user_details(self.current_user, values)
+        return self.redirect('/')
+
 
 class UserProfileHandler(BaseHandler):
     def get(self, uid):
-        return self.render('user.html')
+        ud = self.data.get_user_details(uid=uid)
+        if ud:
+            values = {
+                'gravatar_hash': gravatar_hash(ud.safe_email),
+                'user_details': ud
+            }
+            return self.render('user.html', **values)
+        else:
+            raise tornado.web.HTTPError(404)
+
 
 class GoogleWebmasterConfirmation(tornado.web.RequestHandler):
     def get(self):
@@ -359,9 +406,9 @@ if __name__ == "__main__":
         (r"/scheme/edit/(\d+)", EditSchemeHandler),
         (r"/share", ShareHandler),
         (r"/github/get-gist/(\d+)/([^/]+)", GetGistHandler),
-        (r"/user/(\d+)", UserProfileHandler),
         (r"/user/set/lang", UserSetLangHandler),
         (r"/user/account", UserAccountHandler),
+        (r"/user/(\d+)", UserProfileHandler),
         (r"/api/get-template", ApiGetTemplateHandler),
         (r"/info/?(.*)", StaticInfoHandler),
         (r"/google7af070066b359388.html", GoogleWebmasterConfirmation),
@@ -374,5 +421,6 @@ if __name__ == "__main__":
         "ui_modules": uimodules,
     }
 
+    memcache.flush_all()
     application = tornado.wsgi.WSGIApplication(routes, **settings)
     wsgiref.handlers.CGIHandler().run(application)

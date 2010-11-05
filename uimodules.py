@@ -107,7 +107,12 @@ class UserHeader(BaseUIModule):
 class SchemePreviewSmall(BaseUIModule):
     def render(self, scheme, lang='python'):
         template = self.handler.get_lang_template(lang)
-        return self.render_string('modules/scheme-preview-small.html', scheme=scheme, lang_template=template, lang=lang)
+        return self.render_string('modules/scheme-preview-small.html',
+                                  scheme=scheme,
+                                  author_details=self.handler.data.get_user_details(user=scheme.author),
+                                  lang_template=template,
+                                  lang=lang
+                                  )
 
 
 class PaginationControls(BaseUIModule):

@@ -1,3 +1,41 @@
+window.log = function(){
+  // Only show log when in local development
+  if (window.location.href.indexOf('http://local') == 0) {
+    log.history = log.history || [];
+    log.history.push(arguments);
+    if(this.console){
+      console.log( Array.prototype.slice.call(arguments) );
+    }
+    else{
+
+    }
+  }
+};
+
+// jQuery Plugin for simple hover class swapping
+$.fn.hoverClass = function(cssClass) {
+  $(this).each(function() {
+    $(this).hover( function() { $(this).addClass(cssClass); }, function() { $(this).removeClass(cssClass); } );
+  });
+  return this;
+};
+
+// jQuery Plugin for simple hover class swapping
+$.fn.parentHoverClass = function(cssClass) {
+  $(this).each(function() {
+    $(this).hover( function() { $(this).parent().addClass(cssClass); }, function() { $(this).parent().removeClass(cssClass); } );
+  });
+  return this;
+};
+
+// jQuery Plugin for simple hover/mousedown/mouseup class swapping
+$.fn.buttonBehavior = function(hoverClass, downClass) {
+  $(this).each(function() {
+    $(this).hoverClass(hoverClass).mousedown(function() { $(this).addClass(downClass); }).mouseup(function() { $(this).removeClass(downClass); });
+    $(this).click(function(){ $(this).blur(); });
+  });
+  return this;
+};
 
 function getParameterByName(name, url)
 {
@@ -91,6 +129,14 @@ var checkLangLocalstorage = function(lang) {
         // Check timestamp (in milliseconds) to make sure it's not too old
         var timestamp = localStorage.getItem(lang + '_template_timestamp');
         if ((new Date()).getTime() < (timestamp + 2592000000)) {   // 30 day cache
+            // Re-get it from the server if it's a stupid null template
+            if (html.length < 300) {
+                log("Found template in LS but it's null-ish");
+                fetchLangTemplate(lang, function(html, lang){
+                    updateLangLS(lang, html);
+                });
+                return;
+            }
             log('Loading template from local storage...');
             setLangTemplate(lang, html);
             return;
@@ -114,6 +160,7 @@ var checkLangLocalstorage = function(lang) {
 
 var activatePreviewLanguage = function() {
     var select = $('#main .lang select');
+    select.fadeIn();
 
     // Rectify querystring with select val
     var lang = getParameterByName('lang') || "";
@@ -125,8 +172,10 @@ var activatePreviewLanguage = function() {
     defaultBtn.click(function() {
         // Make sure the user is logged in (if not show login dialog)
         if (typeof(LOGIN_URL) !== 'undefined') {
-            if (LOGIN_URL.indexOf('?') > -1) { LOGIN_URL += '&' } else { LOGIN_URL += '?' }
-            document.location.href = LOGIN_URL + 'setlang=' + select.val();
+            //if (LOGIN_URL.indexOf('?') > -1) { LOGIN_URL += '&' } else { LOGIN_URL += '?' }
+            //var url = LOGIN_URL.replace('?', '?setlang=' + select.val() + '&');
+            //alert(url);
+            document.location.href = LOGIN_URL;
         }
         else {
             $.ajax({
@@ -163,8 +212,7 @@ var activatePreviewLanguage = function() {
             }
             // Check if it's in HTML5 local storage
             if (typeof(TEMPLATE_REFRESH) !== 'undefined' && TEMPLATE_REFRESH) {
-                // Force content to reload once
-                TEMPLATE_REFRESH = false;
+                // Force content to reload
             }
             else {
                 if (Modernizr.localstorage) {
@@ -252,13 +300,16 @@ var GitHubUI = function(parent) {
     });
 
     select.change(function() {
-        var url = '/github/get-gist/' + select.val() +'/' + select.find(':selected').text();
-        parent.find('#ajax-loading').show();
-        $.get(url, function(data){
-            gisttext.val(data);
-            gisttext.parent().fadeIn(250);
-            parent.find('#ajax-loading').hide();
-        });
+        var gistId = select.val();
+        if (gistId.length > 0) {
+            var url = '/github/get-gist/' + select.val() +'/' + select.find(':selected').text();
+            parent.find('#ajax-loading').show();
+            $.get(url, function(data){
+                gisttext.val(data);
+                gisttext.parent().fadeIn(250);
+                parent.find('#ajax-loading').hide();
+            });
+        }
     });
 };
 
